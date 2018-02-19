@@ -16,7 +16,7 @@ import java.util.List;
 public interface GenreRepository extends BaseRepository<Genre> {
 	List<Genre> findByMedium(Medium medium);
 	List<Genre> findByName(String name);
-	List<Genre> findById(List<String> ids);
+	List<Genre> findById(List<Long> ids);
 	List<Genre> findByMdbIdInAndMedium(List<String> mbIds, Medium medium);
 	Genre findByNameAndMedium(String name, Medium medium);
 }

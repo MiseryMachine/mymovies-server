@@ -1,7 +1,8 @@
 package com.rjs.mymovies.server.model;
 
-import org.springframework.data.mongodb.core.index.Indexed;
+import com.rjs.mymovies.server.model.security.Role;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,17 +14,18 @@ import java.util.Set;
  * Date: 2017-07-06<br>
  * Time: 12:33<br>
  */
+@Entity
 public class User extends AbstractElement {
-	@Indexed(unique = true, dropDups = true)
 	@NotNull(message = "User must have a username.")
 	private String username;
 	private String password;
 	private boolean enabled = true;
-	private Set<String> roles = new LinkedHashSet<>();
+	private Set<Role> roles = new LinkedHashSet<>();
 
 	public User() {
 	}
 
+	@Column(nullable = false, unique = true)
 	public String getUsername() {
 		return username;
 	}
@@ -40,6 +42,7 @@ public class User extends AbstractElement {
 		this.password = password;
 	}
 
+	@Column(name = "enabled")
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -48,11 +51,15 @@ public class User extends AbstractElement {
 		this.enabled = enabled;
 	}
 
-	public Set<String> getRoles() {
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
+	@Enumerated(EnumType.STRING)
+	@Column(name = "role")
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set<String> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 }

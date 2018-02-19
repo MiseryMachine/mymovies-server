@@ -1,7 +1,6 @@
 package com.rjs.mymovies.server.model;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -14,10 +13,9 @@ import java.util.Set;
  * Date: 2017-07-06<br>
  * Time: 12:20<br>
  */
+@Entity
 public class Show extends AbstractElement {
-	@Indexed(unique = true, dropDups = true)
 	private String mdbId;
-	@Indexed(unique = true, dropDups = true)
 	private String imdbId;
 	@NotNull(message = "Show must have a title.")
 	private String title;
@@ -30,12 +28,13 @@ public class Show extends AbstractElement {
 	private Set<Genre> genres = new LinkedHashSet<>();
 	private String imageUrl;
 	private String mediaFormat;
-	private String personalNotes;
+	private String myNotes;
 	private double myRating = 0.0;
 
 	public Show() {
 	}
 
+	@Column(name = "mdb_id")
 	public String getMdbId() {
 		return mdbId;
 	}
@@ -44,6 +43,7 @@ public class Show extends AbstractElement {
 		this.mdbId = mdbId;
 	}
 
+	@Column(name = "imdb_id")
 	public String getImdbId() {
 		return imdbId;
 	}
@@ -60,6 +60,7 @@ public class Show extends AbstractElement {
 		this.title = title;
 	}
 
+	@Column(name = "tag_line", length = 511)
 	public String getTagLine() {
 		return tagLine;
 	}
@@ -68,6 +69,7 @@ public class Show extends AbstractElement {
 		this.tagLine = tagLine;
 	}
 
+	@Column(length = 2000)
 	public String getDescription() {
 		return description;
 	}
@@ -76,6 +78,7 @@ public class Show extends AbstractElement {
 		this.description = description;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public Medium getMedium() {
 		return medium;
 	}
@@ -84,6 +87,7 @@ public class Show extends AbstractElement {
 		this.medium = medium;
 	}
 
+	@Column(name = "release_date")
 	public Date getReleaseDate() {
 		return releaseDate;
 	}
@@ -100,6 +104,9 @@ public class Show extends AbstractElement {
 		this.runtime = runtime;
 	}
 
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "show_genre", joinColumns = @JoinColumn(name = "show_id"))
+	@Column(name = "genre")
 	public Set<Genre> getGenres() {
 		return genres;
 	}
@@ -108,6 +115,7 @@ public class Show extends AbstractElement {
 		this.genres = genres;
 	}
 
+	@Column(name = "image_url")
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -116,6 +124,7 @@ public class Show extends AbstractElement {
 		this.imageUrl = imageUrl;
 	}
 
+	@Column(name = "media_format")
 	public String getMediaFormat() {
 		return mediaFormat;
 	}
@@ -124,14 +133,16 @@ public class Show extends AbstractElement {
 		this.mediaFormat = mediaFormat;
 	}
 
-	public String getPersonalNotes() {
-		return personalNotes;
+	@Column(name = "my_notes", length = 2000)
+	public String getMyNotes() {
+		return myNotes;
 	}
 
-	public void setPersonalNotes(String personalNotes) {
-		this.personalNotes = personalNotes;
+	public void setMyNotes(String myNotes) {
+		this.myNotes = myNotes;
 	}
 
+	@Column(name = "my_rating")
 	public double getMyRating() {
 		return myRating;
 	}

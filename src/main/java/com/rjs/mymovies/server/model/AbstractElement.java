@@ -1,6 +1,10 @@
 package com.rjs.mymovies.server.model;
 
-import org.springframework.data.annotation.Id;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 /**
  * <p/>
@@ -9,18 +13,20 @@ import org.springframework.data.annotation.Id;
  * Date: 2017-07-06<br>
  * Time: 11:01<br>
  */
+@MappedSuperclass
 public abstract class AbstractElement {
-	@Id
-	protected String id;
+	protected Long id;
 
 	protected AbstractElement() {
 	}
 
-	public String getId() {
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 }

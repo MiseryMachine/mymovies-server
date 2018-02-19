@@ -1,7 +1,8 @@
 package com.rjs.mymovies.server.model;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -11,8 +12,9 @@ import javax.validation.constraints.NotNull;
  * Date: 2017-07-06<br>
  * Time: 12:10<br>
  */
+@Entity
+@Table(name = "media_format")
 public class MediaFormat extends AbstractElement {
-	@Indexed(unique = true, dropDups = true)
 	@NotNull(message = "Media format must have a name.")
 	private String name;
 	private String description;
@@ -28,6 +30,7 @@ public class MediaFormat extends AbstractElement {
 		this.name = name;
 	}
 
+	@Column(length = 2000)
 	public String getDescription() {
 		return description;
 	}

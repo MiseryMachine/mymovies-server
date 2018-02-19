@@ -1,7 +1,9 @@
 package com.rjs.mymovies.server.model;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -11,8 +13,8 @@ import javax.validation.constraints.NotNull;
  * Date: 2017-07-06<br>
  * Time: 11:25<br>
  */
+@Entity
 public class Genre extends AbstractElement {
-	@Indexed(unique = true, dropDups = true)
 	private String mdbId;
 	private Medium medium;
 	@NotNull(message = "Genre must have a name.")
@@ -21,6 +23,7 @@ public class Genre extends AbstractElement {
 	public Genre() {
 	}
 
+	@Column(name = "mdb_id")
 	public String getMdbId() {
 		return mdbId;
 	}
@@ -29,6 +32,7 @@ public class Genre extends AbstractElement {
 		this.mdbId = mdbId;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public Medium getMedium() {
 		return medium;
 	}

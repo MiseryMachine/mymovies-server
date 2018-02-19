@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,8 @@ public class ShowController {
 		String title = (String) params.get("title");
 
 		if (genres == null || genres.isEmpty()) {
-			return new ArrayList<>();
+			genres = genreRepository.findByMedium(medium);
+//			return new ArrayList<>();
 		}
 
 		return StringUtils.isEmpty(title) ? showRepository.findByGenresIn(genres) : showRepository.findByGenresInAndTitleLike(genres, title);

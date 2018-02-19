@@ -62,14 +62,14 @@ public class TMDBRepository implements MDBRepository {
 	@Override
 	public Iterable<MdbShow> searchShows(Medium medium, String title) {
 		List<MdbShow> results = new ArrayList<>();
-		String mediumPath = medium == Medium.TV ? tmdbConfig.tvPath : tmdbConfig.moviePath;
+		String mediumPath = medium == Medium.TV ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
 		List<String> urlParamsList = new ArrayList<>();
-		urlParamsList.add("api_key=" + tmdbConfig.apiKey);
+		urlParamsList.add("api_key=" + tmdbConfig.getKey());
 		urlParamsList.add("query=" + title);
-		urlParamsList.add("language=" + tmdbConfig.locale);
+		urlParamsList.add("language=" + tmdbConfig.getLocale());
 
 		try {
-			String url = new TMDBUrl(tmdbConfig.url).addPath(tmdbConfig.searchPath).addPath(mediumPath).getUrl() +
+			String url = new TMDBUrl(tmdbConfig.getUrl()).addPath(tmdbConfig.getSearchPath()).addPath(mediumPath).getUrl() +
 					"?" + StringUtils.collectionToDelimitedString(urlParamsList, "&");
 			ResponseEntity<MdbShowListing> responseEntity = RestClient.exchange(HttpMethod.GET, url, null,
 				null, "", new ParameterizedTypeReference<MdbShowListing>() {
@@ -84,7 +84,7 @@ public class TMDBRepository implements MDBRepository {
 			if (showListing != null && showListing.results != null) {
 				results.addAll(showListing.results);
 				results.forEach(e -> {
-					e.posterPath = new TMDBUrl(tmdbConfig.imageUrl).addPath(tmdbConfig.imageThumbPath).getUrl() + e.posterPath;
+					e.posterPath = new TMDBUrl(tmdbConfig.getImageUrl()).addPath(tmdbConfig.getImageThumbPath()).getUrl() + e.posterPath;
 					if (StringUtils.isEmpty(e.releaseDate)) {
 						e.releaseDate = "Unknown";
 					}
@@ -107,12 +107,12 @@ public class TMDBRepository implements MDBRepository {
 				return show;
 			}
 
-			String mediumPath = medium == Medium.TV ? tmdbConfig.tvPath : tmdbConfig.moviePath;
+			String mediumPath = medium == Medium.TV ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
 			List<String> urlParamsList = new ArrayList<>();
-			urlParamsList.add("api_key=" + tmdbConfig.apiKey);
-			urlParamsList.add("language=" + tmdbConfig.locale);
+			urlParamsList.add("api_key=" + tmdbConfig.getKey());
+			urlParamsList.add("language=" + tmdbConfig.getLocale());
 
-			String url = new TMDBUrl(tmdbConfig.url)
+			String url = new TMDBUrl(tmdbConfig.getUrl())
 					.addPath(mediumPath)
 					.addPath("/" + mdbId)
 					.getUrl();
@@ -138,7 +138,7 @@ public class TMDBRepository implements MDBRepository {
 				show.setDescription(tmdbMovie.overview);
 				show.setGenres(convertGenres(tmdbMovie.genres, Medium.MOVIE));
 				show.setRuntime(tmdbMovie.runtime);
-				show.setImageUrl(tmdbConfig.imageUrl + tmdbConfig.imageNormalPath + tmdbMovie.posterPath);
+				show.setImageUrl(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbMovie.posterPath);
 
 				if (!StringUtils.isEmpty(tmdbMovie.releaseDate)) {
 					try {
@@ -162,11 +162,11 @@ public class TMDBRepository implements MDBRepository {
 	@Override
 	public Set<Genre> getGenres(Medium medium) {
 		Set<Genre> genres = new LinkedHashSet<>();
-		String mediumPath = (medium == null || medium == Medium.MOVIE) ? tmdbConfig.moviePath : tmdbConfig.tvPath;
-		String url = new TMDBUrl(tmdbConfig.url)
-				.addPath(tmdbConfig.genrePath)
+		String mediumPath = (medium == null || medium == Medium.MOVIE) ? tmdbConfig.getMoviePath() : tmdbConfig.getTvPath();
+		String url = new TMDBUrl(tmdbConfig.getUrl())
+				.addPath(tmdbConfig.getGenrePath())
 				.addPath(mediumPath)
-				.addPath(tmdbConfig.listPath)
+				.addPath(tmdbConfig.getListPath())
 				.getUrl();
 		genres.addAll(getGenres(url, medium));
 		//		genres.addAll(getGenres(env.getProperty("tmdb.api.url.genres.tv.get"), Medium.TV));
@@ -187,8 +187,8 @@ public class TMDBRepository implements MDBRepository {
 
 		try {
 			List<String> urlParamsList = new ArrayList<>();
-			urlParamsList.add("api_key=" + tmdbConfig.apiKey);
-			urlParamsList.add("language=" + tmdbConfig.locale);
+			urlParamsList.add("api_key=" + tmdbConfig.getKey());
+			urlParamsList.add("language=" + tmdbConfig.getLocale());
 
 			String url = serviceUrl + "?" + StringUtils.collectionToDelimitedString(urlParamsList, "&");
 			ResponseEntity<LinkedHashMap<String, Object>> responseEntity = RestClient.exchangeMap(HttpMethod.GET, url, null, null, "", null);

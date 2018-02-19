@@ -1,8 +1,8 @@
 package com.rjs.mymovies.server.repos.tmdb;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
 /**
  * <p/>
@@ -12,29 +12,109 @@ import org.springframework.context.annotation.PropertySource;
  * Time: 13:12<br>
  */
 @Configuration
-//@PropertySource("classpath:com.rjs.mymovies.repos.tmdb.tmdb-config.properties")
-@PropertySource("classpath:/com/rjs/mymovies/repos/tmdb/tmdb-config.properties")
+@EnableConfigurationProperties
+@ConfigurationProperties(prefix = "tmdb.api")
 public class TMDBConfig {
-	@Value(("${tmdb.api.key}"))
-	public String apiKey;
-	@Value(("${tmdb.api.locale}"))
-	public String locale;
-	@Value(("${tmdb.api.url}"))
-	public String url;
-	@Value(("${tmdb.api.url.genre}"))
-	public String genrePath;
-	@Value(("${tmdb.api.url.movie}"))
-	public String moviePath;
-	@Value(("${tmdb.api.url.tv}"))
-	public String tvPath;
-	@Value(("${tmdb.api.url.image}"))
-	public String imageUrl;
-	@Value(("${tmdb.api.url.image.normal}"))
-	public String imageNormalPath;
-	@Value(("${tmdb.api.url.image.thumb}"))
-	public String imageThumbPath;
-	@Value(("${tmdb.api.url.search}"))
-	public String searchPath;
-	@Value(("${tmdb.api.url.list}"))
-	public String listPath;
+	private String key;
+	private String locale;
+	private String url;
+	private String imageUrl;
+	private String imageNormalPath;
+	private String imageThumbPath;
+	private String genrePath;
+	private String moviePath;
+	private String tvPath;
+	private String searchPath;
+	private String listPath;
+
+	public TMDBConfig() {
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getImageNormalPath() {
+		return imageNormalPath;
+	}
+
+	public void setImageNormalPath(String imageNormalPath) {
+		this.imageNormalPath = imageNormalPath;
+	}
+
+	public String getImageThumbPath() {
+		return imageThumbPath;
+	}
+
+	public void setImageThumbPath(String imageThumbPath) {
+		this.imageThumbPath = imageThumbPath;
+	}
+
+	public String getGenrePath() {
+		return genrePath;
+	}
+
+	public void setGenrePath(String genrePath) {
+		this.genrePath = genrePath;
+	}
+
+	public String getMoviePath() {
+		return moviePath;
+	}
+
+	public void setMoviePath(String moviePath) {
+		this.moviePath = moviePath;
+	}
+
+	public String getTvPath() {
+		return tvPath;
+	}
+
+	public void setTvPath(String tvPath) {
+		this.tvPath = tvPath;
+	}
+
+	public String getSearchPath() {
+		return searchPath;
+	}
+
+	public void setSearchPath(String searchPath) {
+		this.searchPath = searchPath;
+	}
+
+	public String getListPath() {
+		return listPath;
+	}
+
+	public void setListPath(String listPath) {
+		this.listPath = listPath;
+	}
 }
