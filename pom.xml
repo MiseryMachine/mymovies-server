@@ -25,9 +25,15 @@
 
 		<!-- Dependency versions -->
 		<commons-codec.version>1.10</commons-codec.version>
+        <commons-lang.version>3.7</commons-lang.version>
 		<freemarker.version>2.3.23</freemarker.version>
 		<h2.version>1.4.196</h2.version>
 		<mysql.version>5.1.45</mysql.version>
+
+		<!-- webjars versions -->
+		<bootstrap.version>4.0.0</bootstrap.version>
+		<fontawesome.version>4.7.0</fontawesome.version>
+		<jquery.version>3.3.1</jquery.version>
 	</properties>
 
 	<dependencies>
@@ -43,12 +49,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-<!--
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
-		</dependency>
--->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -72,16 +72,38 @@
 			<version>${mysql.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>${commons-codec.version}</version>
 		</dependency>
-<!--
+
+		<!-- webjars -->
 		<dependency>
-			<groupId>org.freemarker</groupId>
-			<artifactId>freemarker</artifactId>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>${bootstrap.version}</version>
 		</dependency>
--->
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>fontawesome</artifactId>
+			<version>${fontawesome.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>${jquery.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>0.30</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>

@@ -1,20 +1,17 @@
 package com.rjs.mymovies.server.controllers;
 
-import com.rjs.mymovies.server.model.Genre;
-import com.rjs.mymovies.server.model.Medium;
 import com.rjs.mymovies.server.model.Show;
+import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.mdb.MdbShow;
-import com.rjs.mymovies.server.repos.GenreRepository;
 import com.rjs.mymovies.server.repos.MDBRepository;
-import com.rjs.mymovies.server.repos.MediaFormatRepository;
-import com.rjs.mymovies.server.repos.ShowRepository;
+import com.rjs.mymovies.server.service.ShowService;
+import com.rjs.mymovies.server.service.ShowTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p/>
@@ -27,60 +24,42 @@ import java.util.Map;
 @RequestMapping(path = "/shows")
 public class ShowController {
 	@Autowired
-	private ShowRepository showRepository;
+	private ShowService showService;
 	@Autowired
-	private GenreRepository genreRepository;
+	private ShowTypeService showTypeService;
 	@Autowired
 	private MDBRepository mdbRepository;
-	@Autowired
-	private MediaFormatRepository mediaFormatRepository;
 
 	public ShowController() {
 	}
 
 	@GetMapping("/genres")
-	public EnumMap<Medium, List<Genre>> getGenres() {
-		EnumMap<Medium, List<Genre>> genreMap = new EnumMap<>(Medium.class);
-
-		for (Medium medium : Medium.values()) {
-			List<Genre> genres = genreRepository.findByMedium(medium);
-
-			genreMap.put(medium, genres);
-		}
-
-		return genreMap;
+	public Map<String, Set<String>> getGenres() {
+		return showTypeService.getAll().stream().collect(Collectors.toMap(ShowType::getName, ShowType::getGenres));
 	}
 
-	@PostMapping("/search/{medium}")
-	public Iterable<Show> searchMyShows(@PathVariable Medium medium, @RequestBody Map<String, Object> params) {
-		List<Genre> genres = (List<Genre>) params.get("genres");
-		String title = (String) params.get("title");
-
-		if (genres == null || genres.isEmpty()) {
-			genres = genreRepository.findByMedium(medium);
-//			return new ArrayList<>();
-		}
-
-		return StringUtils.isEmpty(title) ? showRepository.findByGenresIn(genres) : showRepository.findByGenresInAndTitleLike(genres, title);
+	@PostMapping("/search/{showTypeName}")
+	public Iterable<Show> searchMyShows(@PathVariable String showTypeName, @RequestBody Map<String, Object> params) {
+		return showService.searchShows(showTypeName, params);
 	}
 
-	@GetMapping("/add/{medium}/{mdbId}")
-	public Show addMovieFromMdb(@PathVariable Medium medium, @PathVariable String mdbId) {
-		return mdbRepository.addShow(medium, mdbId);
+	@GetMapping("/add/{showTypeName}/{mdbId}")
+	public Show addMovieFromMdb(@PathVariable String showTypeName, @PathVariable String mdbId) {
+		return mdbRepository.addShow(showTypeName, mdbId);
 	}
 
 	@GetMapping("/deleteAll")
 	public void removeAllShows() {
-		showRepository.deleteAll();
+		showService.deleteAll();
 	}
 
-	@GetMapping(value = "/mdb/search/{medium}/{title}")
-	public Iterable<MdbShow> searchMdbShows(@PathVariable Medium medium, @PathVariable String title) {
-		return mdbRepository.searchShows(medium, title);
+	@GetMapping(value = "/mdb/search/{showTypeName}/{title}")
+	public Iterable<MdbShow> searchMdbShows(@PathVariable String showTypeName, @PathVariable String title) {
+		return mdbRepository.searchShows(showTypeName, title);
 	}
 
-	@GetMapping(value = "/mdb/genres/refresh/{medium}")
-	public Iterable<Genre> refreshGenres(@PathVariable Medium medium) {
-		return mdbRepository.getGenres(medium);
+	@GetMapping(value = "/mdb/genres/refresh/{showTypeName}")
+	public Iterable<String> refreshGenres(@PathVariable String showTypeName) {
+		return mdbRepository.getGenres(showTypeName);
 	}
 }

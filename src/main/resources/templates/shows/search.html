@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/layouts/default"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>My Movies</title>
+    <link rel="stylesheet" th:href="@{/css/rating.css}"/>
+</head>
+<body>
+<div id="showsPage" layout:fragment="content">
+    <h1 class="row">Search Shows</h1>
+
+    <form action="#" th:action="@{/shows/search}" th:object="${searchParams}" method="post">
+        <div class="form-row">
+            <div class="col-sm-9">
+                <div class="form-row">
+                    <div class="form-group col-sm-4">
+                        <label for="show-type-select">Type:</label>
+                        <select id="show-type-select" class="form-control" th:field="*{showType}" onchange="updateGenres()">
+                            <option th:each="st : ${showTypes}"
+                                    th:value="${st.id}"
+                                    th:text="${st.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <label for="format-select">Format:</label>
+                        <select id="format-select" class="form-control" th:field="*{format}">
+                            <option th:each="mFormat : ${mediaFormats}"
+                                    th:value="${mFormat}"
+                                    th:text="${mFormat}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-4">
+                        <label for="rating-select">Rating:</label>
+                        <select id="rating-select" class="form-control" th:field="*{rating}">
+                            <option th:each="r : ${ratings}"
+                                    th:value="${r}"
+                                    th:text="${r} + ' star'"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-sm-12">
+                        <label for="title-text">Title:</label>
+                        <input id="title-text" type="text" name="title" class="form-control" th:field="*{title}"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="title-text">Genres:</label>
+                    <select id="genre-select" class="form-control" multiple="multiple" size="5" th:field="*{genres}">
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 text-center">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+    <p> </p>
+    <h2 class="row">Search Results</h2>
+    <div class="row">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Tag Line</th>
+                <th scope="col">Genres</th>
+                <th scope="col">Format</th>
+                <th scope="col">Rating</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="show : ${searchResults}">
+                <td><a href="#"><span th:text="${show.title}" /></a></td>
+                <td th:text="${show.tagLine}"></td>
+                <td th:text="${show.genreText}"></td>
+                <td th:text="${show.mediaFormat}"></td>
+                <td>
+                    <span class="fa fa-star" th:classappend="(${show.myRating} > 0) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.myRating} > 1) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.myRating} > 2) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.myRating} > 3) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.myRating} > 4) ? 'starred' : ''"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div layout:fragment="scripts">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function updateGenres() {
+            var showTypes = /*[[${showTypes}]]*/ null;
+            var showTypeIdx = $("#show-type-select").prop('selectedIndex');
+
+            if (showTypeIdx === null || showTypeIdx === undefined) {
+                showTypeIdx = 0;
+            }
+
+            var showType = showTypes[showTypeIdx];
+            var genreSelect = $("#genre-select");
+            var options = [];
+
+            if (genreSelect.prop) {
+                options = genreSelect.prop("options");
+            }
+            else {
+                options = genreSelect.attr("options");
+            }
+
+            $("option", genreSelect).remove();
+
+            if (showType !== null && showType !== undefined) {
+                var genres = showType.genres;
+                // var genres = showType.genresOrdered;
+
+                $.each(genres, function (genreIdx, genreVal) {
+                    options[options.length] = new Option(genreVal, genreVal);
+                });
+            }
+        }
+        /*]]>*/
+    </script>
+    <script>
+        $(document).ready(updateGenres());
+    </script>
+</div>
+</body>
+</html>

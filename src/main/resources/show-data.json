@@ -4,140 +4,76 @@
       "username": "admin",
       "password": "admin",
       "enabled": true,
-      "roles": ["ADMIN", "USER"]
+      "roles": ["ROLE_ADMIN", "ROLE_USER"]
     },
     {
       "username": "user1",
       "password": "user1",
       "enabled": true,
-      "roles": ["USER"]
+      "roles": ["ROLE_USER"]
     },
     {
       "username": "user2",
       "password": "user1",
       "enabled": true,
-      "roles": ["USER"]
+      "roles": ["ROLE_USER"]
     },
     {
       "username": "user3",
       "password": "user1",
       "enabled": true,
-      "roles": ["USER"]
+      "roles": ["ROLE_USER"]
+    }
+  ],
+  "showTypes": [
+    {
+      "name": "Movie",
+      "genres": ["Action", "Adventure", "Romance", "Comedy", "Drama", "Anime", "Cartoon"]
     },
     {
-      "username": "user4",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
-    },
-    {
-      "username": "user5",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
-    },
-    {
-      "username": "user6",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
-    },
-    {
-      "username": "user7",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
-    },
-    {
-      "username": "user8",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
-    },
-    {
-      "username": "user9",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
-    },
-    {
-      "username": "user10",
-      "password": "user1",
-      "enabled": true,
-      "roles": ["USER"]
+      "name": "TV",
+      "genres": ["Action", "Adventure", "Romance", "Comedy", "Drama", "Sit-Com", "Anime", "Cartoon"]
     }
   ],
   "shows": [
     {
       "title": "Pulp Fiction",
+      "tagLine": "Vincent Vega",
       "description": "Vincent Vega",
       "mdbId": "abc123",
       "imdbId": "abc123",
-      "medium": "MOVIE",
       "releaseDate": "2001-01-01",
       "runtime": 124,
-      "genres": [
-        {
-          "mdbId": "778",
-          "medium": "MOVIE",
-          "name" : "Action"
-        },
-        {
-          "mdbId": "779",
-          "medium": "MOVIE",
-          "name" : "Adventure"
-        }
-      ],
-      "mediaFormat": "BLU-RAY"
+      "showType": "Movie",
+      "genres": ["Action", "Adventure"],
+      "mediaFormat": "BLU-RAY",
+      "myRating": 4
     },
     {
       "title": "Lost In Translation",
+      "tagLine": "Couple find each other in Japan.",
       "description": "Couple find each other in Japan.",
       "mdbId": "abc124",
       "imdbId": "abc124",
-      "medium": "MOVIE",
       "releaseDate": "2007-01-01",
       "runtime": 109,
-      "genres": [
-        {
-          "mdbId": "777",
-          "medium": "MOVIE",
-          "name" : "Romance"
-        },
-        {
-          "mdbId": "776",
-          "medium": "MOVIE",
-          "name" : "Comedy"
-        }
-      ],
-      "mediaFormat": "Amazon Prime"
+      "showType": "Movie",
+      "genres": ["Romance", "Comedy"],
+      "mediaFormat": "Amazon Prime",
+      "myRating": 3
     },
     {
       "title": "Fullmetal Alchemist: Brotherhood",
+      "tagLine": "Ed and Al Elrich",
       "description": "Ed and Al Elrich",
       "mdbId": "abc126",
       "imdbId": "abc126",
-      "medium": "TV",
       "releaseDate": "2008-01-01",
       "runtime": 25,
-      "genres": [
-        {
-          "mdbId": "788",
-          "medium": "TV",
-          "name" : "Action"
-        },
-        {
-          "mdbId": "786",
-          "medium": "TV",
-          "name" : "Comedy"
-        },
-        {
-          "mdbId": "789",
-          "medium": "TV",
-          "name" : "Adventure"
-        }
-      ],
-      "mediaFormat": "Netflix"
+      "showType": "TV",
+      "genres": ["Anime", "Action", "Comedy", "Adventure"],
+      "mediaFormat": "Netflix",
+      "myRating": 5
     }
   ]
 }

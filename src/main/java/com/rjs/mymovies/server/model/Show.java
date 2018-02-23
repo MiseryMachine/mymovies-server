@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * <p/>
@@ -21,15 +22,14 @@ public class Show extends AbstractElement {
 	private String title;
 	private String tagLine;
 	private String description;
-	@NotNull(message = "Show must have a medium.")
-	private Medium medium;
 	private Date releaseDate;
 	private int runtime = 0;
-	private Set<Genre> genres = new LinkedHashSet<>();
+	private String showType;
+	private Set<String> genres = new LinkedHashSet<>();
 	private String imageUrl;
 	private String mediaFormat;
 	private String myNotes;
-	private double myRating = 0.0;
+	private int myRating = 0;
 
 	public Show() {
 	}
@@ -78,15 +78,6 @@ public class Show extends AbstractElement {
 		this.description = description;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public Medium getMedium() {
-		return medium;
-	}
-
-	public void setMedium(Medium medium) {
-		this.medium = medium;
-	}
-
 	@Column(name = "release_date")
 	public Date getReleaseDate() {
 		return releaseDate;
@@ -104,16 +95,36 @@ public class Show extends AbstractElement {
 		this.runtime = runtime;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "show_genre", joinColumns = @JoinColumn(name = "show_id"))
-	@Column(name = "genre")
-	public Set<Genre> getGenres() {
+	@Column(name = "show_type", length = 40, nullable = false)
+	public String getShowType() {
+		return showType;
+	}
+
+	public void setShowType(String showType) {
+		this.showType = showType;
+	}
+
+	@ElementCollection
+	@CollectionTable(name = "show_genre", joinColumns = @JoinColumn(name = "show_id"))
+	@Column(name = "genre", length = 40, nullable = false)
+	@OrderBy(value = "genre")
+	public Set<String> getGenres() {
 		return genres;
 	}
 
-	public void setGenres(Set<Genre> genres) {
+	public void setGenres(Set<String> genres) {
 		this.genres = genres;
 	}
+
+	@Transient
+	public String getGenreText() {
+		if (genres == null || genres.isEmpty()) {
+			return "No Genres";
+		}
+
+		return genres.stream().collect(Collectors.joining(", "));
+	}
+
 
 	@Column(name = "image_url")
 	public String getImageUrl() {
@@ -143,11 +154,11 @@ public class Show extends AbstractElement {
 	}
 
 	@Column(name = "my_rating")
-	public double getMyRating() {
+	public int getMyRating() {
 		return myRating;
 	}
 
-	public void setMyRating(double myRating) {
+	public void setMyRating(int myRating) {
 		this.myRating = myRating;
 	}
 }

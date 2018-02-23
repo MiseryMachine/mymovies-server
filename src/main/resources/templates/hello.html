@@ -2,15 +2,19 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/layouts/default"
 >
 <head>
     <meta charset="UTF-8"/>
     <title>My Movies - Hello</title>
 </head>
 <body>
-<h1 th:inline="text">Hey there, [[${#httpServletRequest.remoteUser}]].</h1>
-<form th:action="@{/logout}" method="post">
-    <input type="submit" value="Log Out"/>
-</form>
+<div id="homePage" layout:fragment="content">
+    <h1 th:inline="text">Hey there, [[${#httpServletRequest.remoteUser}]].</h1>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Log Out"/>
+    </form>
+</div>
 </body>
 </html>

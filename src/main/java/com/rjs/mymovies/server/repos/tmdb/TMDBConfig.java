@@ -1,7 +1,6 @@
 package com.rjs.mymovies.server.repos.tmdb;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
  * Time: 13:12<br>
  */
 @Configuration
-@EnableConfigurationProperties
 @ConfigurationProperties(prefix = "tmdb.api")
 public class TMDBConfig {
 	private String key;

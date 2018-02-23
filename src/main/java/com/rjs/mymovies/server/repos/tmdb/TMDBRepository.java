@@ -2,25 +2,24 @@ package com.rjs.mymovies.server.repos.tmdb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rjs.mymovies.server.model.Genre;
-import com.rjs.mymovies.server.model.Medium;
 import com.rjs.mymovies.server.model.Show;
+import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.mdb.MdbGenre;
 import com.rjs.mymovies.server.model.mdb.MdbShow;
 import com.rjs.mymovies.server.model.mdb.MdbShowDetail;
 import com.rjs.mymovies.server.model.mdb.MdbShowListing;
-import com.rjs.mymovies.server.repos.GenreRepository;
 import com.rjs.mymovies.server.repos.MDBRepository;
-import com.rjs.mymovies.server.repos.ShowRepository;
+import com.rjs.mymovies.server.service.ShowService;
+import com.rjs.mymovies.server.service.ShowTypeService;
 import com.rjs.mymovies.server.util.web.RestClient;
 import com.rjs.mymovies.server.util.web.WebServiceException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -28,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * <p/>
@@ -47,22 +47,17 @@ public class TMDBRepository implements MDBRepository {
 	@Autowired
 	private ObjectMapper jsonObjectMapper;
 	@Autowired
-	private ShowRepository showRepository;
+	private ShowService showService;
 	@Autowired
-	private GenreRepository genreRepository;
+	private ShowTypeService showTypeService;
 
 	public TMDBRepository() {
 	}
 
 	@Override
-	public Iterable<MdbShow> searchShows(String title) {
-		return searchShows(Medium.MOVIE, title);
-	}
-
-	@Override
-	public Iterable<MdbShow> searchShows(Medium medium, String title) {
+	public Iterable<MdbShow> searchShows(String showTypeName, String title) {
 		List<MdbShow> results = new ArrayList<>();
-		String mediumPath = medium == Medium.TV ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
+		String mediumPath = "TV".equalsIgnoreCase(showTypeName) ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
 		List<String> urlParamsList = new ArrayList<>();
 		urlParamsList.add("api_key=" + tmdbConfig.getKey());
 		urlParamsList.add("query=" + title);
@@ -70,7 +65,7 @@ public class TMDBRepository implements MDBRepository {
 
 		try {
 			String url = new TMDBUrl(tmdbConfig.getUrl()).addPath(tmdbConfig.getSearchPath()).addPath(mediumPath).getUrl() +
-					"?" + StringUtils.collectionToDelimitedString(urlParamsList, "&");
+					"?" + urlParamsList.stream().collect(Collectors.joining("&"));
 			ResponseEntity<MdbShowListing> responseEntity = RestClient.exchange(HttpMethod.GET, url, null,
 				null, "", new ParameterizedTypeReference<MdbShowListing>() {
 				}, null);
@@ -99,15 +94,15 @@ public class TMDBRepository implements MDBRepository {
 	}
 
 	@Override
-	public Show addShow(Medium medium, String mdbId) {
+	public Show addShow(String showTypeName, String mdbId) {
 		try {
-			Show show = showRepository.findByMdbId(mdbId);
+			Show show = showService.findByMdbId(mdbId);
 
 			if (show != null) {
 				return show;
 			}
 
-			String mediumPath = medium == Medium.TV ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
+			String mediumPath = "TV".equalsIgnoreCase(showTypeName) ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
 			List<String> urlParamsList = new ArrayList<>();
 			urlParamsList.add("api_key=" + tmdbConfig.getKey());
 			urlParamsList.add("language=" + tmdbConfig.getLocale());
@@ -116,7 +111,7 @@ public class TMDBRepository implements MDBRepository {
 					.addPath(mediumPath)
 					.addPath("/" + mdbId)
 					.getUrl();
-			url += "?" + StringUtils.collectionToDelimitedString(urlParamsList, "&");
+			url += "?" + urlParamsList.stream().collect(Collectors.joining("&"));
 
 			ResponseEntity<MdbShowDetail> responseEntity = RestClient.exchange(HttpMethod.GET, url, null,
 				null, "", new ParameterizedTypeReference<MdbShowDetail>() {
@@ -130,17 +125,17 @@ public class TMDBRepository implements MDBRepository {
 
 			if (tmdbMovie != null) {
 				show = new Show();
-				show.setMedium(medium);
+				show.setShowType(showTypeName);
 				show.setMdbId(String.valueOf(tmdbMovie.id));
 				show.setImdbId(tmdbMovie.imdbId);
 				show.setTitle(tmdbMovie.title);
 				show.setTagLine(tmdbMovie.tagline);
 				show.setDescription(tmdbMovie.overview);
-				show.setGenres(convertGenres(tmdbMovie.genres, Medium.MOVIE));
+				show.setGenres(convertGenres(tmdbMovie.genres, showTypeName));
 				show.setRuntime(tmdbMovie.runtime);
 				show.setImageUrl(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbMovie.posterPath);
 
-				if (!StringUtils.isEmpty(tmdbMovie.releaseDate)) {
+				if (!StringUtils.isBlank(tmdbMovie.releaseDate)) {
 					try {
 						show.setReleaseDate(dateFormat.parse(tmdbMovie.releaseDate));
 					}
@@ -149,7 +144,7 @@ public class TMDBRepository implements MDBRepository {
 					}
 				}
 
-				return showRepository.save(show);
+				return showService.save(show);
 			}
 		}
 		catch (IOException e) {
@@ -160,26 +155,19 @@ public class TMDBRepository implements MDBRepository {
 	}
 
 	@Override
-	public Set<Genre> getGenres(Medium medium) {
-		Set<Genre> genres = new LinkedHashSet<>();
-		String mediumPath = (medium == null || medium == Medium.MOVIE) ? tmdbConfig.getMoviePath() : tmdbConfig.getTvPath();
+	public Set<String> getGenres(String showTypeName) {
+		String mediumPath = (StringUtils.isBlank(showTypeName) || "MOVIE".equalsIgnoreCase(showTypeName)) ? tmdbConfig.getMoviePath() : tmdbConfig.getTvPath();
 		String url = new TMDBUrl(tmdbConfig.getUrl())
 				.addPath(tmdbConfig.getGenrePath())
 				.addPath(mediumPath)
 				.addPath(tmdbConfig.getListPath())
 				.getUrl();
-		genres.addAll(getGenres(url, medium));
-		//		genres.addAll(getGenres(env.getProperty("tmdb.api.url.genres.tv.get"), Medium.TV));
-
-		return genres;
+		return getGenres(url, showTypeName);
 	}
 
-	private Set<Genre> getGenres(String serviceUrl, Medium medium) {
-		Set<Genre> genres = new LinkedHashSet<>();
+	private Set<String> getGenres(String serviceUrl, String showTypeName) {
 		Map<String, MdbGenre> tmdbGenreMap = getTmdbGenreMap(serviceUrl);
-		genres.addAll(convertGenres(tmdbGenreMap.values(), medium));
-
-		return genres;
+		return convertGenres(tmdbGenreMap.values(), showTypeName);
 	}
 
 	private Map<String, MdbGenre> getTmdbGenreMap(String serviceUrl) {
@@ -190,7 +178,7 @@ public class TMDBRepository implements MDBRepository {
 			urlParamsList.add("api_key=" + tmdbConfig.getKey());
 			urlParamsList.add("language=" + tmdbConfig.getLocale());
 
-			String url = serviceUrl + "?" + StringUtils.collectionToDelimitedString(urlParamsList, "&");
+			String url = serviceUrl + "?" + urlParamsList.stream().collect(Collectors.joining("&"));
 			ResponseEntity<LinkedHashMap<String, Object>> responseEntity = RestClient.exchangeMap(HttpMethod.GET, url, null, null, "", null);
 
 			if (responseEntity.getStatusCode() != HttpStatus.OK) {
@@ -214,22 +202,34 @@ public class TMDBRepository implements MDBRepository {
 		return results;
 	}
 
-	private Set<Genre> convertGenres(Collection<MdbGenre> mdbGenres, Medium medium) {
-		Set<Genre> genres = new LinkedHashSet<>();
+	private Set<String> convertGenres(Collection<MdbGenre> mdbGenres, String showTypeName) {
+		ShowType showType = showTypeService.get(showTypeName);
+
+		if (showType == null) {
+			showType = new ShowType();
+			showType.setName(showTypeName);
+
+			showType = showTypeService.save(showType);
+		}
+
+		Set<String> genres = new LinkedHashSet<>();
+		Set<String> curGenres = showType.getGenres();
 
 		if (mdbGenres != null) {
+			boolean saveShowType = false;
+
 			for (MdbGenre mdbGenre : mdbGenres) {
-				Genre genre = genreRepository.findByNameAndMedium(mdbGenre.name, medium);
+				genres.add(mdbGenre.name);
 
-				if (genre == null) {
-					genre = new Genre();
-					genre.setName(mdbGenre.name);
-					genre.setMdbId(String.valueOf(mdbGenre.id));
-					genre.setMedium(medium);
-					genre = genreRepository.save(genre);
+				if (!curGenres.contains(mdbGenre.name)) {
+					curGenres.add(mdbGenre.name);
+
+					saveShowType = true;
 				}
+			}
 
-				genres.add(genre);
+			if (saveShowType) {
+				showType = showTypeService.save(showType);
 			}
 		}
 
