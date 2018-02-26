@@ -1,5 +1,6 @@
-date:
-  pattern: yyyy-MM-dd
+mymovies:
+  date-pattern: yyyy-MM-dd
+  local-file-path: C:/projects/mymovies-server/app-files
 server:
   context-path: /mymovies
 spring:

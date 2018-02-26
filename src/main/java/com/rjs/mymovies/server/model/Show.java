@@ -26,7 +26,7 @@ public class Show extends AbstractElement {
 	private int runtime = 0;
 	private String showType;
 	private Set<String> genres = new LinkedHashSet<>();
-	private String imageUrl;
+//	private String imageUrl;
 	private String mediaFormat;
 	private String myNotes;
 	private int myRating = 0;
@@ -126,6 +126,7 @@ public class Show extends AbstractElement {
 	}
 
 
+/*
 	@Column(name = "image_url")
 	public String getImageUrl() {
 		return imageUrl;
@@ -134,6 +135,7 @@ public class Show extends AbstractElement {
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
 	}
+*/
 
 	@Column(name = "media_format")
 	public String getMediaFormat() {

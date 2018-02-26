@@ -1,10 +1,9 @@
 package com.rjs.mymovies.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.text.SimpleDateFormat;
 
@@ -16,17 +15,16 @@ import java.text.SimpleDateFormat;
  * Time: 12:27<br>
  */
 @Configuration
+@ConfigurationProperties("mymovies")
 public class AppConfig {
-	@Value(("${date.pattern:MM/dd/yyyy}"))
+	private static final String SHOW_PATH = "/shows";
+	private static final String IMAGE_PATH = "/images";
+	private static final int POSTER_THUMB_WIDTH = 92;
+//	@Value(("${date.pattern:MM/dd/yyyy}"))
 	private String datePattern;
-	@Value(("${spring.profiles.active:unknown}"))
-	private String profile;
-	@Value(("${spring.datasource.driver-class-name:unknown}"))
-	private String dbDriver;
+	private String localFilePath;
 
-	@Bean
-	public LocalValidatorFactoryBean validator() {
-		return new LocalValidatorFactoryBean();
+	public AppConfig() {
 	}
 
 	@Bean
@@ -37,5 +35,25 @@ public class AppConfig {
 	@Bean
 	public ObjectMapper jsonObjectMapper() {
 		return new ObjectMapper();
+	}
+
+	public String getLocalImagePath(String showId) {
+		return localFilePath + SHOW_PATH + "/" + showId + IMAGE_PATH;
+	}
+
+	public String getDatePattern() {
+		return datePattern;
+	}
+
+	public void setDatePattern(String datePattern) {
+		this.datePattern = datePattern;
+	}
+
+	public String getLocalFilePath() {
+		return localFilePath;
+	}
+
+	public void setLocalFilePath(String localFilePath) {
+		this.localFilePath = localFilePath;
 	}
 }

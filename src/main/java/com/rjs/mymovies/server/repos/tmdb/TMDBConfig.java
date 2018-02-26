@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * Time: 13:12<br>
  */
 @Configuration
-@ConfigurationProperties(prefix = "tmdb.api")
+@ConfigurationProperties("tmdb.api")
 public class TMDBConfig {
 	private String key;
 	private String locale;

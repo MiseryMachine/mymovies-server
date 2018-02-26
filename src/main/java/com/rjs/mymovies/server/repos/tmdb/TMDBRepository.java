@@ -2,6 +2,7 @@ package com.rjs.mymovies.server.repos.tmdb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rjs.mymovies.server.config.AppConfig;
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.mdb.MdbGenre;
@@ -11,6 +12,7 @@ import com.rjs.mymovies.server.model.mdb.MdbShowListing;
 import com.rjs.mymovies.server.repos.MDBRepository;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
+import com.rjs.mymovies.server.util.ImageUtil;
 import com.rjs.mymovies.server.util.web.RestClient;
 import com.rjs.mymovies.server.util.web.WebServiceException;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -40,6 +43,8 @@ import java.util.stream.Collectors;
 public class TMDBRepository implements MDBRepository {
 	private static final Logger LOGGER = Logger.getLogger(TMDBRepository.class.getName());
 
+	@Autowired
+	private AppConfig appConfig;
 	@Autowired
 	private TMDBConfig tmdbConfig;
 	@Autowired
@@ -133,7 +138,7 @@ public class TMDBRepository implements MDBRepository {
 				show.setDescription(tmdbMovie.overview);
 				show.setGenres(convertGenres(tmdbMovie.genres, showTypeName));
 				show.setRuntime(tmdbMovie.runtime);
-				show.setImageUrl(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbMovie.posterPath);
+//				show.setImageUrl(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbMovie.posterPath);
 
 				if (!StringUtils.isBlank(tmdbMovie.releaseDate)) {
 					try {
@@ -144,7 +149,12 @@ public class TMDBRepository implements MDBRepository {
 					}
 				}
 
-				return showService.save(show);
+				show = showService.save(show);
+
+				// Download and save poster image locally
+				downlaodPosterImage(show, tmdbMovie.posterPath);
+
+				return show;
 			}
 		}
 		catch (IOException e) {
@@ -163,6 +173,15 @@ public class TMDBRepository implements MDBRepository {
 				.addPath(tmdbConfig.getListPath())
 				.getUrl();
 		return getGenres(url, showTypeName);
+	}
+
+	private void downlaodPosterImage(Show show, String tmdbPosterPath) throws IOException {
+		if (show.getId() == null) {
+			throw new IllegalStateException("Show must be saved prior to adding poster image.");
+		}
+
+		URL posterUrl = new URL(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbPosterPath);
+		ImageUtil.saveImage(posterUrl, appConfig.getLocalImagePath(String.valueOf(show.getId())), "poster");
 	}
 
 	private Set<String> getGenres(String serviceUrl, String showTypeName) {

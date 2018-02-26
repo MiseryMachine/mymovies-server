@@ -4,7 +4,7 @@
       "username": "admin",
       "password": "admin",
       "enabled": true,
-      "roles": ["ROLE_ADMIN", "ROLE_USER"]
+      "roles": ["ROLE_ADMIN", "ROLE_REST_USER", "ROLE_USER"]
     },
     {
       "username": "user1",

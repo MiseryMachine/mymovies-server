@@ -54,6 +54,9 @@
                 <div class="form-group">
                     <label for="title-text">Genres:</label>
                     <select id="genre-select" class="form-control" multiple="multiple" size="5" th:field="*{genres}">
+                        <option th:each="g : *{showType.genres}"
+                                th:value="${g}"
+                                th:text="${g}"></option>
                     </select>
                 </div>
             </div>
@@ -64,10 +67,30 @@
     </form>
     <p> </p>
     <h2 class="row">Search Results</h2>
+    <nav aria-label="...">
+        <ul class="pagination d-flex justify-content-center">
+            <li class="page-item" th:classappend="${searchResults.first} ? disabled : ''">
+                <a class="page-link" href="#" aria-label="Prev">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Prev</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNum,iterStat : ${searchResults.pageNumbers}" th:classappend="((${iterStat.current} - 1) == ${searchResults.currentPage}) ? 'active' : ''">
+                <a class="page-link" href="#"><span th:text="${pageNum}"></span></a>
+            </li>
+            <li class="page-item" th:classappend="${searchResults.last} ? disabled : ''">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
     <div class="row">
         <table class="table table-striped">
             <thead class="thead-dark">
             <tr>
+                <th scope="col"> </th>
                 <th scope="col">Title</th>
                 <th scope="col">Tag Line</th>
                 <th scope="col">Genres</th>
@@ -76,7 +99,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="show : ${searchResults}">
+            <tr th:each="show : ${searchResults.content}">
+                <td><img th:src="@{${'/shows/poster-thumb/' + show.id}}"/></td>
                 <td><a href="#"><span th:text="${show.title}" /></a></td>
                 <td th:text="${show.tagLine}"></td>
                 <td th:text="${show.genreText}"></td>
@@ -92,45 +116,25 @@
             </tbody>
         </table>
     </div>
-</div>
-<div layout:fragment="scripts">
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        function updateGenres() {
-            var showTypes = /*[[${showTypes}]]*/ null;
-            var showTypeIdx = $("#show-type-select").prop('selectedIndex');
-
-            if (showTypeIdx === null || showTypeIdx === undefined) {
-                showTypeIdx = 0;
-            }
-
-            var showType = showTypes[showTypeIdx];
-            var genreSelect = $("#genre-select");
-            var options = [];
-
-            if (genreSelect.prop) {
-                options = genreSelect.prop("options");
-            }
-            else {
-                options = genreSelect.attr("options");
-            }
-
-            $("option", genreSelect).remove();
-
-            if (showType !== null && showType !== undefined) {
-                var genres = showType.genres;
-                // var genres = showType.genresOrdered;
-
-                $.each(genres, function (genreIdx, genreVal) {
-                    options[options.length] = new Option(genreVal, genreVal);
-                });
-            }
-        }
-        /*]]>*/
-    </script>
-    <script>
-        $(document).ready(updateGenres());
-    </script>
+    <nav aria-label="...">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${searchResults.first} ? disabled : ''">
+                <a class="page-link" href="#" aria-label="Prev">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Prev</span>
+                </a>
+            </li>
+            <li class="page-item" th:each="pageNum,iterStat : ${searchResults.pageNumbers}" th:classappend="((${iterStat.current} - 1) == ${searchResults.currentPage}) ? 'active' : ''">
+                <a class="page-link" href="#"><span th:text="${pageNum}"></span></a>
+            </li>
+            <li class="page-item" th:classappend="${searchResults.last} ? disabled : ''">
+                <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>
