@@ -2,6 +2,8 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:dt="http://www.thymeleaf.org/dandelion/datatables"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="/layouts/default"
 >
@@ -14,13 +16,13 @@
 <div id="showsPage" layout:fragment="content">
     <h1 class="row">Search Shows</h1>
 
-    <form action="#" th:action="@{/shows/search}" th:object="${searchParams}" method="post">
+    <form action="#" th:action="@{/shows/search}" th:object="${showSearchFilter}" method="post">
         <div class="form-row">
             <div class="col-sm-9">
                 <div class="form-row">
                     <div class="form-group col-sm-4">
                         <label for="show-type-select">Type:</label>
-                        <select id="show-type-select" class="form-control" th:field="*{showType}" onchange="updateGenres()">
+                        <select id="show-type-select" class="form-control" th:field="*{showType}">
                             <option th:each="st : ${showTypes}"
                                     th:value="${st.id}"
                                     th:text="${st.name}"></option>
@@ -62,46 +64,34 @@
             </div>
         </div>
         <div class="col-sm-12 text-center">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button id="search-button" type="submit" class="btn btn-primary">Search</button>
+            <button id="reset-button" type="reset" class="btn btn-default">Reset</button>
         </div>
     </form>
-    <p> </p>
-    <h2 class="row">Search Results</h2>
-    <nav aria-label="...">
-        <ul class="pagination d-flex justify-content-center">
-            <li class="page-item" th:classappend="${searchResults.first} ? disabled : ''">
-                <a class="page-link" href="#" aria-label="Prev">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Prev</span>
-                </a>
-            </li>
-            <li class="page-item" th:each="pageNum,iterStat : ${searchResults.pageNumbers}" th:classappend="((${iterStat.current} - 1) == ${searchResults.currentPage}) ? 'active' : ''">
-                <a class="page-link" href="#"><span th:text="${pageNum}"></span></a>
-            </li>
-            <li class="page-item" th:classappend="${searchResults.last} ? disabled : ''">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <div class="row">
-        <table class="table table-striped">
+    <p></p>
+    <h2 class="row">Search Results - DT</h2>
+    <div id="results-area" th:if="${shows != null and shows.size() gt 0}" class="row">
+        <table id="show-table" class="table table-striped"
+               dt:table="true"
+               dt:pagingType="full_numbers"
+               dt:lengthMenu="5,10,20"
+               dt:dom="&lt;'row'&lt;'col-sm-3'f>&lt;'col-sm-9'p>>&lt;'row'&lt;'col-sm-12'tr>>&lt;'row'&lt;'col-sm-3'l>&lt;'col-sm-9'p>>"
+        >
             <thead class="thead-dark">
             <tr>
-                <th scope="col"> </th>
+                <th scope="col" dt:sortable="false"></th>
                 <th scope="col">Title</th>
-                <th scope="col">Tag Line</th>
-                <th scope="col">Genres</th>
+                <th scope="col" dt:sortable="false">Tag Line</th>
+                <th scope="col" dt:sortable="false">Genres</th>
                 <th scope="col">Format</th>
-                <th scope="col">Rating</th>
+                <th scope="col" dt:sortType="natural">Rating</th>
+                <th sec:authorize="hasRole('ROLE_ADMIN')" scope="col" dt:sortable="false">Edit</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="show : ${searchResults.content}">
+            <tr th:each="show : ${shows}">
                 <td><img th:src="@{${'/shows/poster-thumb/' + show.id}}"/></td>
-                <td><a href="#"><span th:text="${show.title}" /></a></td>
+                <td><a href="#"><span th:text="${show.title}"/></a></td>
                 <td th:text="${show.tagLine}"></td>
                 <td th:text="${show.genreText}"></td>
                 <td th:text="${show.mediaFormat}"></td>
@@ -112,29 +102,14 @@
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 3) ? 'starred' : ''"></span>
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 4) ? 'starred' : ''"></span>
                 </td>
+                <td sec:authorize="hasRole('ROLE_ADMIN')" class="text-center">
+                    <a href="#"><span class="fa fa-pencil-square-o text-success"
+                                      th:title="'Edit ' + ${show.title}"></span></a>
+                </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <nav aria-label="...">
-        <ul class="pagination justify-content-center">
-            <li class="page-item" th:classappend="${searchResults.first} ? disabled : ''">
-                <a class="page-link" href="#" aria-label="Prev">
-                    <span aria-hidden="true">&laquo;</span>
-                    <span class="sr-only">Prev</span>
-                </a>
-            </li>
-            <li class="page-item" th:each="pageNum,iterStat : ${searchResults.pageNumbers}" th:classappend="((${iterStat.current} - 1) == ${searchResults.currentPage}) ? 'active' : ''">
-                <a class="page-link" href="#"><span th:text="${pageNum}"></span></a>
-            </li>
-            <li class="page-item" th:classappend="${searchResults.last} ? disabled : ''">
-                <a class="page-link" href="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
 </div>
 </body>
 </html>

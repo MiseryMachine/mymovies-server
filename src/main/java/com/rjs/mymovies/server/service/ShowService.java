@@ -20,9 +20,9 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,32 +76,35 @@ public class ShowService extends BaseService<Show, ShowRepository> {
         }
 
         String localPosterPath = appConfig.getLocalImagePath(String.valueOf(showId));
-        File posterFile = new File(localPosterPath, "poster.png");
+        String ext = ".png";
+        File posterFile = new File(localPosterPath, "poster" + ext);
         String imageType = ImageUtil.PNG;
 
         if (!posterFile.exists()) {
-            posterFile = new File(localPosterPath, "poster.jpg");
+            ext = ".jpg";
+            posterFile = new File(localPosterPath, "poster" + ext);
             imageType = ImageUtil.JPEG;
         }
 
         if (!posterFile.exists()) {
-            posterFile = new File(localPosterPath, "poster.jpeg");
+            ext = ".jpeg";
+            posterFile = new File(localPosterPath, "poster" + ext);
             imageType = ImageUtil.JPEG;
         }
 
         if (posterFile.exists()) {
             try {
-                BufferedImage poster = ImageIO.read(posterFile);
-
                 if (thumb) {
-                    BufferedImage thumbPoster = ImageUtil.getThumbImage(poster);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(thumbPoster, imageType, baos);
-                    baos.flush();
-                    byte[] data = baos.toByteArray();
-                    baos.close();
+                    File thumbFile = new File(localPosterPath, "poster_thumb" + ext);
 
-                    return data;
+                    // Generate a thumb image from poster, if necessary.
+                    if (!thumbFile.exists()) {
+                        BufferedImage poster = ImageIO.read(posterFile);
+                        BufferedImage thumbImage = ImageUtil.getThumbImage(poster);
+                        ImageIO.write(thumbImage, imageType, new FileOutputStream(thumbFile));
+                    }
+
+                    return IOUtils.toByteArray(new FileInputStream(thumbFile));
                 }
                 else {
                     return IOUtils.toByteArray(new FileInputStream(posterFile));

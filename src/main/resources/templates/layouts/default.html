@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8"/>
@@ -9,19 +10,6 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap-grid.min.css}"/>
     <link rel="stylesheet" th:href="@{/webjars/fontawesome/4.7.0/css/font-awesome.min.css}"/>
-<!--
-    <style rel="stylesheet">
-        body {
-            padding-top: 60px;
-        }
-
-        @media (max-width: 979px) {
-            body {
-                padding-top: 0px;
-            }
-        }
-    </style>
--->
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -33,7 +21,7 @@
         <ul class="navbar-nav mr-auto">
             <li id="navHome" class="nav-item"><a class="nav-link" th:href="@{/home}">Home</a></li>
             <li id="navShows" class="nav-item"><a class="nav-link" th:href="@{/shows/search}">Shows</a></li>
-            <li id="navAdmin" class="nav-item"><a class="nav-link" th:href="@{/admin/adminTemplate}">Admin</a></li>
+            <li sec:authorize="hasRole('ROLE_ADMIN')" id="navAdmin" class="nav-item"><a class="nav-link" th:href="@{/admin/adminTemplate}">Admin</a></li>
             <!--<li id="navAbout" class="nav-item"><a class="nav-link" href="#about">About</a></li>-->
         </ul>
     </div>

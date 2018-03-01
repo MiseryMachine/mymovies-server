@@ -2,16 +2,13 @@ package com.rjs.mymovies.server.controllers;
 
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.ShowType;
-import com.rjs.mymovies.server.model.form.PageWrapper;
 import com.rjs.mymovies.server.model.mdb.MdbShow;
 import com.rjs.mymovies.server.repos.MDBRepository;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,12 +41,6 @@ public class ShowController {
 	@PostMapping("/search/{showTypeName}")
 	public Iterable<Show> searchMyShows(@PathVariable String showTypeName, @RequestBody Map<String, Object> params) {
 		return showService.searchShows(showTypeName, params);
-	}
-
-	@PostMapping("/r-page/{showTypeName}")
-	public PageWrapper<Show> searchMyShows(@PathVariable String showTypeName) {
-//		return showService.searchShowsPageable(new PageRequest(0, 20), showTypeName, new HashMap<>());
-		return new PageWrapper<>(showService.searchShowsPageable(new PageRequest(0, 20), showTypeName, new HashMap<>()));
 	}
 
 	@GetMapping("/add/{showTypeName}/{mdbId}")
