@@ -2,8 +2,6 @@
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:dt="http://www.thymeleaf.org/dandelion/datatables"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="/layouts/default"
 >
@@ -11,6 +9,61 @@
     <meta charset="UTF-8"/>
     <title>My Movies</title>
     <link rel="stylesheet" th:href="@{/css/rating.css}"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            var isAdmin = /*[[${@adminService.hasRoles(#httpServletRequest, 'ROLE_ADMIN')}]]*/ false;
+
+            // Update the active item in the nav bar
+            if ($("#homePage").length) {
+                $("#navHome").addClass("active");
+            }
+            else if ($("#showsPage").length) {
+                $("#navShows").addClass("active");
+            }
+            else if ($("#adminPage").length) {
+                $("#navAdmin").addClass("active");
+            }
+
+            var colDefs = [
+                {
+                    targets: [0,2],
+                    orderable: false
+                },
+                {
+                    targets: [5],
+                    type: "natural",
+                    width: "85px"
+                },
+                {
+                    targets: [6],
+                    visible: false
+                }
+            ];
+
+            if (isAdmin) {
+                colDefs = [
+                    {
+                        targets: [0,2,6],
+                        orderable: false
+                    },
+                    {
+                        targets: [5],
+                        type: "natural",
+                        width: "85px"
+                    }
+                ]
+            }
+
+            $('#show-table').DataTable({
+                pagingType: 'full_numbers',
+                lengthMenu: [5,10,20],
+                dom: "<'row'<'col-sm-3'f><'col-sm-9'p>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'l><'col-sm-9'p>>",
+                columnDefs: colDefs
+            });
+        });
+        /*]]>*/
+    </script>
 </head>
 <body>
 <div id="showsPage" layout:fragment="content">
@@ -70,22 +123,17 @@
     </form>
     <p></p>
     <h2 class="row">Search Results - DT</h2>
-    <div id="results-area" th:if="${shows != null and shows.size() gt 0}" class="row">
-        <table id="show-table" class="table table-striped"
-               dt:table="true"
-               dt:pagingType="full_numbers"
-               dt:lengthMenu="5,10,20"
-               dt:dom="&lt;'row'&lt;'col-sm-3'f>&lt;'col-sm-9'p>>&lt;'row'&lt;'col-sm-12'tr>>&lt;'row'&lt;'col-sm-3'l>&lt;'col-sm-9'p>>"
-        >
+    <div id="results-area" class="row">
+        <table id="show-table" class="table table-striped">
             <thead class="thead-dark">
             <tr>
-                <th scope="col" dt:sortable="false"></th>
+                <th scope="col"></th>
                 <th scope="col">Title</th>
-                <th scope="col" dt:sortable="false">Tag Line</th>
-                <th scope="col" dt:sortable="false">Genres</th>
+                <th scope="col">Tag Line</th>
+                <th scope="col">Genres</th>
                 <th scope="col">Format</th>
-                <th scope="col" dt:sortType="natural">Rating</th>
-                <th sec:authorize="hasRole('ROLE_ADMIN')" scope="col" dt:sortable="false">Edit</th>
+                <th scope="col">Rating</th>
+                <th scope="col">Edit</th>
             </tr>
             </thead>
             <tbody>
@@ -95,16 +143,17 @@
                 <td th:text="${show.tagLine}"></td>
                 <td th:text="${show.genreText}"></td>
                 <td th:text="${show.mediaFormat}"></td>
-                <td>
+                <td class="text-center">
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 0) ? 'starred' : ''"></span>
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 1) ? 'starred' : ''"></span>
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 2) ? 'starred' : ''"></span>
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 3) ? 'starred' : ''"></span>
                     <span class="fa fa-star" th:classappend="(${show.myRating} > 4) ? 'starred' : ''"></span>
                 </td>
-                <td sec:authorize="hasRole('ROLE_ADMIN')" class="text-center">
-                    <a href="#"><span class="fa fa-pencil-square-o text-success"
-                                      th:title="'Edit ' + ${show.title}"></span></a>
+                <td class="text-center">
+                    <a href="#">
+                        <span class="fa fa-pencil-square-o text-success" th:title="'Edit ' + ${show.title}"></span>
+                    </a>
                 </td>
             </tr>
             </tbody>

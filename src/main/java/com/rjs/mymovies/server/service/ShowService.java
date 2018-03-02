@@ -12,8 +12,7 @@ import com.rjs.mymovies.server.util.ImageUtil;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
@@ -46,25 +45,21 @@ public class ShowService extends BaseService<Show, ShowRepository> {
         return ((ShowRepository) repository).findByMdbId(mdbId);
     }
 
-    public Page<Show> searchShowsPageable(Pageable pageable, String showTypeName, Map<String, Object> filter) {
-        if (StringUtils.isNotBlank(showTypeName)) {
-            Specification<Show> spec = buildShowSpecification(showTypeName, filter);
-
-            return spec != null ? ((ShowRepository) repository).findAll(spec, pageable) : null;
-        }
-
-        return null;
-    }
-
     public List<Show> findByTitle(String title) {
         return ((ShowRepository) repository).findByTitle(title);
     }
 
     public List<Show> searchShows(String showTypeName, Map<String, Object> filter) {
+        return searchShows(showTypeName, filter, null);
+    }
+
+    public List<Show> searchShows(String showTypeName, Map<String, Object> filter, Sort sort) {
         if (StringUtils.isNotBlank(showTypeName)) {
             Specification<Show> spec = buildShowSpecification(showTypeName, filter);
 
-            return spec != null ? ((ShowRepository) repository).findAll(spec) : new ArrayList<>();
+            if (spec != null) {
+                return sort != null ? ((ShowRepository) repository).findAll(spec, sort) : ((ShowRepository) repository).findAll(spec);
+            }
         }
 
         return new ArrayList<>();

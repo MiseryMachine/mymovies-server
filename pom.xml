@@ -80,18 +80,6 @@
 			<version>${mysql.version}</version>
 		</dependency>
 
-		<!-- Dandelion DataTables -->
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-thymeleaf</artifactId>
-			<version>${dandelion-dt.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-spring3</artifactId>
-			<version>${dandelion-dt.version}</version>
-		</dependency>
-
 		<!-- Utils -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>

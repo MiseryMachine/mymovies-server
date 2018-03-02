@@ -7,6 +7,7 @@ import com.rjs.mymovies.server.model.form.show.ShowSearch;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,10 @@ import java.util.Map;
 @SessionAttributes("showSearchFilter")
 @RequestMapping("/shows")
 public class ShowWebController {
+    private static final Sort DEFAULT_SORT = new Sort(
+        new Sort.Order(Sort.Direction.DESC, "myRating"),
+        new Sort.Order(Sort.Direction.ASC, "title"));
+
     @Autowired
     private ShowTypeService showTypeService;
     private ShowService showService;
@@ -93,7 +98,7 @@ public class ShowWebController {
         paramMap.put("mediaFormat", showSearch.getFormat());
         paramMap.put("genres", showSearch.getGenres());
 
-        return showService.searchShows(showType.getName(), paramMap);
+        return showService.searchShows(showType.getName(), paramMap, DEFAULT_SORT);
     }
 
     private Map<String, Object> buildSearchModel(ShowSearch showSearch, List<Show> searchResults) {

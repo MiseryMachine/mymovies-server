@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -52,5 +53,15 @@ public class AdminService extends BaseService<User, UserRepository> {
         }
 
         return repository.findAll(Example.of(exampleUser, defaultStringMatcher), pageSortBuilder.getSort());
+    }
+
+    public boolean hasRoles(HttpServletRequest request, String... roleNames) {
+        for (String roleName : roleNames) {
+            if (request.isUserInRole(roleName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
