@@ -20,9 +20,12 @@ public class Show extends AbstractElement {
 	private String imdbId;
 	@NotNull(message = "Show must have a title.")
 	private String title;
+	private String showRating = "N/R";
+	private String ratingComponents;
 	private String tagLine;
 	private String description;
 	private Date releaseDate;
+	private String releaseDateText;
 	private int runtime = 0;
 	private String showType;
 	private Set<String> genres = new LinkedHashSet<>();
@@ -60,6 +63,24 @@ public class Show extends AbstractElement {
 		this.title = title;
 	}
 
+	@Column(name = "show_rating", length = 10, nullable = false)
+	public String getShowRating() {
+		return showRating;
+	}
+
+	public void setShowRating(String showRating) {
+		this.showRating = showRating;
+	}
+
+	@Column(name = "rating_components")
+	public String getRatingComponents() {
+		return ratingComponents;
+	}
+
+	public void setRatingComponents(String ratingComponents) {
+		this.ratingComponents = ratingComponents;
+	}
+
 	@Column(name = "tag_line", length = 511)
 	public String getTagLine() {
 		return tagLine;
@@ -85,6 +106,15 @@ public class Show extends AbstractElement {
 
 	public void setReleaseDate(Date releaseDate) {
 		this.releaseDate = releaseDate;
+	}
+
+	@Transient
+	public String getReleaseDateText() {
+		return releaseDateText;
+	}
+
+	public void setReleaseDateText(String releaseDateText) {
+		this.releaseDateText = releaseDateText;
 	}
 
 	public int getRuntime() {
@@ -124,18 +154,6 @@ public class Show extends AbstractElement {
 
 		return genres.stream().collect(Collectors.joining(", "));
 	}
-
-
-/*
-	@Column(name = "image_url")
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-*/
 
 	@Column(name = "media_format")
 	public String getMediaFormat() {

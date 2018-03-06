@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/rating.css}"/>
+</head>
+<body>
+<div id="show-modal" class="modal fade" tabindex="-1" role="dialog" th:fragment="modalContents">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <h5 th:text="${showDetails.title}"></h5>
+                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 0) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 1) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 2) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 3) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 4) ? 'starred' : ''"></span>
+                    &nbsp;
+                    <span style="font-weight: bold;" th:text="'(' + ${showDetails.showRating} + ')'"></span>
+                    &nbsp;
+                    <span style="font-weight: bold;" th:text="'[' + ${showDetails.mediaFormat} + ']'"></span>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4"><img th:src="@{${'/shows/poster/' + showDetails.id}}" width="210"/></div>
+                        <div class="col-sm-8">
+                            <div class="row"><span style="font-weight: bold">Plot:</span></div>
+                            <div class="row"><span th:text="${showDetails.description}"></span></div>
+                            <div class="row" style="padding-top: 10px;"><span style="font-weight: bold">My Notes:</span></div>
+                            <div class="row"><span th:text="${showDetails.myNotes}"></span></div>
+                            <div class="row" style="padding-top: 10px;"><span style="font-weight: bold">Genres:</span></div>
+                            <div class="row"><span th:text="${showDetails.genreText}"></span></div>
+                            <div class="row" style="padding-top: 10px;" th:if="${showDetails.imdbId != null}">
+                                <a th:href="'https://www.imdb.com/title/' + ${showDetails.imdbId}" th:target="'IMDB_' + ${showDetails.id}">IMDB Page</a>
+                            </div>
+                            <div class="row text-left" style="padding-top: 10px;">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <span style="font-weight: bold">Rating: </span>
+                                            <span th:text="${showDetails.showRating}"></span>
+                                        </td>
+                                        <td style="padding-left: 20px; padding-right: 20px;">
+                                            <span style="font-weight: bold">Run Time: </span>
+                                            <span th:text="${showDetails.runtime}"></span>
+                                        </td>
+                                        <td>
+                                            <span style="font-weight: bold">Released: </span>
+                                            <span th:text="${showDetails.releaseDateText}"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="row" style="padding-top: 10px;"><span style="font-weight: bold">Contains:</span></div>
+                            <div class="row"><span th:text="${showDetails.ratingComponents}"></span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -65,14 +65,17 @@
     {
       "title": "Fight Club",
       "tagLine": "His name was Robert Paulson.",
-      "description": "Hit me.",
+      "description": "Story of a insurance adjuster, turn soap salesman, turn underground fight club and vandal.",
+      "showRating": "R",
+      "ratingComponents": "Language, Violence, Substance Abuse, Nudity, Sexual Content",
       "mdbId": "abc125",
-      "imdbId": "abc125",
-      "releaseDate": "2007-01-01",
-      "runtime": 109,
+      "imdbId": "tt0137523",
+      "releaseDate": "1999-10-15",
+      "runtime": 139,
       "showType": "Movie",
       "genres": ["Action", "Psychological"],
       "mediaFormat": "BLU-RAY",
+      "myNotes": "Awesome mind blowing.",
       "myRating": 5
     },
     {

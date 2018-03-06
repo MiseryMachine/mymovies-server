@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,8 @@ public class ShowWebController {
         new Sort.Order(Sort.Direction.DESC, "myRating"),
         new Sort.Order(Sort.Direction.ASC, "title"));
 
+    @Autowired
+    private SimpleDateFormat dateFormat;
     @Autowired
     private ShowTypeService showTypeService;
     private ShowService showService;
@@ -61,8 +65,26 @@ public class ShowWebController {
     }
 
     @GetMapping(value = "/poster-thumb/{showId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
-    public @ResponseBody byte[] getPosterImage(@PathVariable Long showId) {
+    public @ResponseBody byte[] getPosterThumb(@PathVariable Long showId) {
         return showService.getShowPosterData(showId, true);
+    }
+
+    @GetMapping(value = "/poster/{showId}", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
+    public @ResponseBody byte[] getPosterImage(@PathVariable Long showId) {
+        return showService.getShowPosterData(showId, false);
+    }
+
+    @GetMapping(value = "/details/{showId}")
+    public String getShowDetails(@PathVariable Long showId, ModelMap modelMap) {
+        Show show = showService.get(showId);
+
+        if (show != null && show.getReleaseDate() != null) {
+            show.setReleaseDateText(dateFormat.format(show.getReleaseDate()));
+        }
+
+        modelMap.addAttribute("showDetails", show);
+
+        return "shows/showModal :: modalContents";
     }
 
     @ModelAttribute("showSearchFilter")

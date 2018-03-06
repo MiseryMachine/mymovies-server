@@ -62,6 +62,20 @@
                 columnDefs: colDefs
             });
         });
+
+        var showDetailsUrl = /*[[@{/shows/details}]]*/ "/shows/blah/details";
+
+        function openShowModal(showId) {
+            $.ajax({
+                url: showDetailsUrl + "/" + showId,
+                // url: /*[[@{/shows/details}*/ "/shows/details",
+                // url: "/shows/details/" + showId,
+                success: function(data) {
+                    $("#show-modal-holder").html(data);
+                    $("#show-modal").modal("show");
+                }
+            })
+        }
         /*]]>*/
     </script>
 </head>
@@ -139,7 +153,7 @@
             <tbody>
             <tr th:each="show : ${shows}">
                 <td><img th:src="@{${'/shows/poster-thumb/' + show.id}}"/></td>
-                <td><a href="#"><span th:text="${show.title}"/></a></td>
+                <td><a href="#" th:onclick="'openShowModal(' + ${show.id} + '); return false;'"><span th:text="${show.title}"/></a></td>
                 <td th:text="${show.tagLine}"></td>
                 <td th:text="${show.genreText}"></td>
                 <td th:text="${show.mediaFormat}"></td>
@@ -159,6 +173,7 @@
             </tbody>
         </table>
     </div>
+    <div id="show-modal-holder"></div>
 </div>
 </body>
 </html>

@@ -1,7 +1,9 @@
 package com.rjs.mymovies.server.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -9,6 +11,7 @@ import java.util.Set;
 public class ShowType extends AbstractElement {
     private String name;
     private Set<String> genres = new LinkedHashSet<>();
+    private List<String> ratings = new ArrayList<>();
 
     public ShowType() {
     }
@@ -32,5 +35,14 @@ public class ShowType extends AbstractElement {
 
     public void setGenres(Set<String> genres) {
         this.genres = genres;
+    }
+
+    @Transient
+    public List<String> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<String> ratings) {
+        this.ratings = ratings;
     }
 }
