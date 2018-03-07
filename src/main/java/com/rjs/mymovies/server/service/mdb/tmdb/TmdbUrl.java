@@ -1,4 +1,4 @@
-package com.rjs.mymovies.server.repos.tmdb;
+package com.rjs.mymovies.server.service.mdb.tmdb;
 
 /**
  * <p/>
@@ -7,18 +7,18 @@ package com.rjs.mymovies.server.repos.tmdb;
  * Date: 2017-07-06<br>
  * Time: 13:24<br>
  */
-public class TMDBUrl {
+public class TmdbUrl {
 	private String url;
 
-	public TMDBUrl() {
+	public TmdbUrl() {
 		this("");
 	}
 
-	public TMDBUrl(String url) {
+	public TmdbUrl(String url) {
 		this.url = url;
 	}
 
-	public TMDBUrl addPath(String path) {
+	public TmdbUrl addPath(String path) {
 		url += path;
 
 		return this;

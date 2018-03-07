@@ -1,5 +1,9 @@
 package com.rjs.mymovies.server.model;
 
+import com.rjs.mymovies.server.config.AppConfig;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -21,9 +25,11 @@ public class Show extends AbstractElement {
 	@NotNull(message = "Show must have a title.")
 	private String title;
 	private String showRating = "N/R";
-	private String ratingComponents;
+	private String contents;
+	private String[] contentsArray;
 	private String tagLine;
 	private String description;
+	@DateTimeFormat(pattern = AppConfig.DATE_PATTERN)
 	private Date releaseDate;
 	private String releaseDateText;
 	private int runtime = 0;
@@ -32,7 +38,7 @@ public class Show extends AbstractElement {
 //	private String imageUrl;
 	private String mediaFormat;
 	private String myNotes;
-	private int myRating = 0;
+	private int starRating = 0;
 
 	public Show() {
 	}
@@ -73,12 +79,25 @@ public class Show extends AbstractElement {
 	}
 
 	@Column(name = "rating_components")
-	public String getRatingComponents() {
-		return ratingComponents;
+	public String getContents() {
+		return contents;
 	}
 
-	public void setRatingComponents(String ratingComponents) {
-		this.ratingComponents = ratingComponents;
+	public void setContents(String contents) {
+		this.contents = contents;
+
+		if (StringUtils.isNotBlank(contents)) {
+			contentsArray = contents.split(DataConstants.VALUE_DELIMITER);
+		}
+	}
+
+	@Transient
+	public String[] getContentsArray() {
+		return contentsArray;
+	}
+
+	public void setContentsArray(String[] contentsArray) {
+		this.contentsArray = contentsArray;
 	}
 
 	@Column(name = "tag_line", length = 511)
@@ -152,7 +171,7 @@ public class Show extends AbstractElement {
 			return "No Genres";
 		}
 
-		return genres.stream().collect(Collectors.joining(", "));
+		return genres.stream().collect(Collectors.joining(DataConstants.VALUE_DELIMITER));
 	}
 
 	@Column(name = "media_format")
@@ -173,12 +192,12 @@ public class Show extends AbstractElement {
 		this.myNotes = myNotes;
 	}
 
-	@Column(name = "my_rating")
-	public int getMyRating() {
-		return myRating;
+	@Column(name = "star_rating")
+	public int getStarRating() {
+		return starRating;
 	}
 
-	public void setMyRating(int myRating) {
-		this.myRating = myRating;
+	public void setStarRating(int starRating) {
+		this.starRating = starRating;
 	}
 }

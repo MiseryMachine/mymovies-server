@@ -7,7 +7,7 @@
 >
 <head>
     <meta charset="UTF-8"/>
-    <title>My Movies</title>
+    <title>Search Shows</title>
     <link rel="stylesheet" th:href="@{/css/rating.css}"/>
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -105,8 +105,8 @@
                     </div>
                     <div class="form-group col-sm-4">
                         <label for="rating-select">Rating:</label>
-                        <select id="rating-select" class="form-control" th:field="*{rating}">
-                            <option th:each="r : ${ratings}"
+                        <select id="rating-select" class="form-control" th:field="*{starRating}">
+                            <option th:each="r : ${starRatings}"
                                     th:value="${r}"
                                     th:text="${r} + ' star'"></option>
                         </select>
@@ -136,7 +136,7 @@
         </div>
     </form>
     <p></p>
-    <h2 class="row">Search Results - DT</h2>
+    <h2 class="row">Search Results</h2>
     <div id="results-area" class="row">
         <table id="show-table" class="table table-striped">
             <thead class="thead-dark">
@@ -158,14 +158,15 @@
                 <td th:text="${show.genreText}"></td>
                 <td th:text="${show.mediaFormat}"></td>
                 <td class="text-center">
-                    <span class="fa fa-star" th:classappend="(${show.myRating} > 0) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${show.myRating} > 1) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${show.myRating} > 2) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${show.myRating} > 3) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${show.myRating} > 4) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.starRating} > 0) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.starRating} > 1) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.starRating} > 2) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.starRating} > 3) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${show.starRating} > 4) ? 'starred' : ''"></span>
                 </td>
                 <td class="text-center">
-                    <a href="#">
+                    <!--<a href="#" th:href="@{/shows/edit-show/${show.id}}">-->
+                    <a href="#" th:href="@{${'/admin/edit-show/' + show.id}}">
                         <span class="fa fa-pencil-square-o text-success" th:title="'Edit ' + ${show.title}"></span>
                     </a>
                 </td>

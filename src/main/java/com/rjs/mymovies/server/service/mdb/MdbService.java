@@ -1,4 +1,4 @@
-package com.rjs.mymovies.server.repos;
+package com.rjs.mymovies.server.service.mdb;
 
 
 import com.rjs.mymovies.server.model.Show;
@@ -13,7 +13,7 @@ import java.util.Set;
  * Date: 2/7/2017<br>
  * Time: 11:22 AM<br>
  */
-public interface MDBRepository {
+public interface MdbService {
 	Iterable<MdbShow> searchShows(String showTypeName, String title);
 
 	Show addShow(String showTypeName, String mdbId);

@@ -1,6 +1,7 @@
 package com.rjs.mymovies.server.model;
 
 public class DataConstants {
+    public static final String VALUE_DELIMITER = ", ";
     public static final String[] SHOW_TYPES = {"Movie", "TV"};
     public static final String[] MOVIE_RATINGS = {"G", "PG", "PG-13", "R", "NC-17", "N/R"};
     public static final String[] MOVIE_RATING_COMPONENTS = {"Language", "Violence", "Substance Abuse", "Nudity", "Sexual Content"};

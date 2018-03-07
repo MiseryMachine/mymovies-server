@@ -11,12 +11,29 @@
 </head>
 <body>
 <div id="adminPage" layout:fragment="content">
-    <div class="col-sm-2 sidenav">
-        <p><a th:href="@{/admin/adminShows}">Shows</a></p>
-        <p><a th:href="@{/admin/adminUsers}">Users</a></p>
-    </div>
-    <div class="col-sm-10 text-left" layout:fragment="admin_content">
-        <h1>Admin content</h1>
+    <div class="row">
+        <div class="col-sm-2">
+            <nav class="nav flex-column">
+                <a class="btn btn-primary nav-link" role="button" th:href="@{/admin/mdb/search-mdb}">Add Shows</a>
+                <a class="btn btn-primary nav-link" role="button" th:href="@{/admin/adminUsers}">Users</a>
+            </nav>
+            <!--
+                    <ul class="nav nav-pills flex-column">
+                        <li>
+                            <a th:href="@{/admin/adminShows}">Shows</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/mdb/search-mdb}">Add Shows</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/adminUsers}">Users</a>
+                        </li>
+                    </ul>
+            -->
+        </div>
+        <div class="col-sm-10 text-left" layout:fragment="admin-content">
+            <h1>Admin content</h1>
+        </div>
     </div>
 </div>
 </body>

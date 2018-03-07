@@ -1,6 +1,7 @@
 package com.rjs.mymovies.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,13 +16,11 @@ import java.text.SimpleDateFormat;
  * Time: 12:27<br>
  */
 @Configuration
-@ConfigurationProperties("mymovies")
+@ConfigurationProperties("my-movies")
 public class AppConfig {
+	public static final String DATE_PATTERN = "yyyy-MM-dd";
 	private static final String SHOW_PATH = "/shows";
 	private static final String IMAGE_PATH = "/images";
-	private static final int POSTER_THUMB_WIDTH = 92;
-//	@Value(("${date.pattern:MM/dd/yyyy}"))
-	private String datePattern;
 	private String localFilePath;
 
 	public AppConfig() {
@@ -29,24 +28,24 @@ public class AppConfig {
 
 	@Bean
 	public SimpleDateFormat dateFormat() {
-		return new SimpleDateFormat(datePattern);
+		return new SimpleDateFormat(DATE_PATTERN);
 	}
 
 	@Bean
 	public ObjectMapper jsonObjectMapper() {
-		return new ObjectMapper();
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setDateFormat(dateFormat());
+
+		return objectMapper;
+	}
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 
 	public String getLocalImagePath(String showId) {
 		return localFilePath + SHOW_PATH + "/" + showId + IMAGE_PATH;
-	}
-
-	public String getDatePattern() {
-		return datePattern;
-	}
-
-	public void setDatePattern(String datePattern) {
-		this.datePattern = datePattern;
 	}
 
 	public String getLocalFilePath() {

@@ -47,7 +47,7 @@
       "showType": "Movie",
       "genres": ["Action", "Adventure"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 4
+      "starRating": 4
     },
     {
       "title": "Lost In Translation",
@@ -60,14 +60,14 @@
       "showType": "Movie",
       "genres": ["Romance", "Comedy"],
       "mediaFormat": "Amazon Prime",
-      "myRating": 3
+      "starRating": 3
     },
     {
       "title": "Fight Club",
       "tagLine": "His name was Robert Paulson.",
       "description": "Story of a insurance adjuster, turn soap salesman, turn underground fight club and vandal.",
       "showRating": "R",
-      "ratingComponents": "Language, Violence, Substance Abuse, Nudity, Sexual Content",
+      "contents": "Language, Violence, Substance Abuse, Nudity, Sexual Content",
       "mdbId": "abc125",
       "imdbId": "tt0137523",
       "releaseDate": "1999-10-15",
@@ -76,7 +76,7 @@
       "genres": ["Action", "Psychological"],
       "mediaFormat": "BLU-RAY",
       "myNotes": "Awesome mind blowing.",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Airplane",
@@ -89,7 +89,7 @@
       "showType": "Movie",
       "genres": ["Comedy"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Airplane II",
@@ -102,7 +102,7 @@
       "showType": "Movie",
       "genres": ["Comedy"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Michael Clayton",
@@ -115,7 +115,7 @@
       "showType": "Movie",
       "genres": ["Drama", "Suspense"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Heartbreak Ridge",
@@ -128,7 +128,7 @@
       "showType": "Movie",
       "genres": ["Action", "Military"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "We Were Soldiers",
@@ -141,7 +141,7 @@
       "showType": "Movie",
       "genres": ["Action", "Military", "Drama"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Star Wars: Return Of The Jedi",
@@ -154,7 +154,7 @@
       "showType": "Movie",
       "genres": ["Action", "Adventure", "Sci-Fi"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Gladiator",
@@ -167,7 +167,7 @@
       "showType": "Movie",
       "genres": ["Action", "Historical"],
       "mediaFormat": "BLU-RAY",
-      "myRating": 5
+      "starRating": 5
     },
     {
       "title": "Fullmetal Alchemist: Brotherhood",
@@ -180,7 +180,7 @@
       "showType": "TV",
       "genres": ["Anime", "Action", "Comedy", "Adventure"],
       "mediaFormat": "Netflix",
-      "myRating": 5
+      "starRating": 5
     }
   ]
 }

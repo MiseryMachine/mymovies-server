@@ -1,5 +1,5 @@
-mymovies:
-  date-pattern: yyyy-MM-dd
+my-movies:
+#  date-pattern: yyyy-MM-dd
   local-file-path: C:/projects/mymovies-server/app-files
 server:
   context-path: /mymovies

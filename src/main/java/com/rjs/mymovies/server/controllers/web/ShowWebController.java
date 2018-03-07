@@ -3,9 +3,11 @@ package com.rjs.mymovies.server.controllers.web;
 import com.rjs.mymovies.server.model.DataConstants;
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.ShowType;
+import com.rjs.mymovies.server.model.dto.ShowDto;
 import com.rjs.mymovies.server.model.form.show.ShowSearch;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -18,15 +20,18 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @SessionAttributes("showSearchFilter")
 @RequestMapping("/shows")
 public class ShowWebController {
     private static final Sort DEFAULT_SORT = new Sort(
-        new Sort.Order(Sort.Direction.DESC, "myRating"),
+        new Sort.Order(Sort.Direction.DESC, "starRating"),
         new Sort.Order(Sort.Direction.ASC, "title"));
 
+    @Autowired
+    private ModelMapper modelMapper;
     @Autowired
     private SimpleDateFormat dateFormat;
     @Autowired
@@ -49,7 +54,6 @@ public class ShowWebController {
             List<Show> results = getShowData(showSearch);
             mav.getModel().putAll(buildSearchModel(showSearch, results));
         }
-
 
         return mav;
     }
@@ -97,13 +101,13 @@ public class ShowWebController {
 
         showSearch.setShowType(showTypeService.get("Movie"));
         showSearch.setFormat(DataConstants.MEDIA_FORMATS[0]);
-        showSearch.setRating(DataConstants.STAR_RATINGS[DataConstants.STAR_RATINGS.length - 1]);
+        showSearch.setStarRating(DataConstants.STAR_RATINGS[DataConstants.STAR_RATINGS.length - 1]);
         showSearch.setTitle("");
 
         Map<String, Object> model = new HashMap<>();
 
         model.put("showTypes", showTypeService.getAll());
-        model.put("ratings", DataConstants.STAR_RATINGS);
+        model.put("starRatings", DataConstants.STAR_RATINGS);
         model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
         model.put("showSearchFilter", showSearch);
         model.put("shows", null);
@@ -116,7 +120,7 @@ public class ShowWebController {
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("title", showSearch.getTitle());
-        paramMap.put("rating", showSearch.getRating());
+        paramMap.put("starRating", showSearch.getStarRating());
         paramMap.put("mediaFormat", showSearch.getFormat());
         paramMap.put("genres", showSearch.getGenres());
 
@@ -125,13 +129,24 @@ public class ShowWebController {
 
     private Map<String, Object> buildSearchModel(ShowSearch showSearch, List<Show> searchResults) {
         Map<String, Object> model = new HashMap<>();
+        List<ShowDto> showDtos = null;
+
+        if (searchResults != null && !searchResults.isEmpty()) {
+            showDtos = searchResults.stream().map(s -> convertToShowDto(s)).collect(Collectors.toList());
+        }
 
         model.put("showTypes", showTypeService.getAll());
-        model.put("ratings", DataConstants.STAR_RATINGS);
+        model.put("starRatings", DataConstants.STAR_RATINGS);
         model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
         model.put("showSearchFilter", showSearch);
-        model.put("shows", searchResults);
+        model.put("shows", showDtos);
 
         return model;
+    }
+
+    private ShowDto convertToShowDto(Show show) {
+        ShowDto showDto = modelMapper.map(show, ShowDto.class);
+
+        return showDto;
     }
 }

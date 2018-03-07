@@ -1,4 +1,4 @@
-package com.rjs.mymovies.server.repos.tmdb;
+package com.rjs.mymovies.server.service.mdb.tmdb;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConfigurationProperties("tmdb.api")
-public class TMDBConfig {
+public class TmdbConfig {
 	private String key;
 	private String locale;
 	private String url;
@@ -25,7 +25,7 @@ public class TMDBConfig {
 	private String searchPath;
 	private String listPath;
 
-	public TMDBConfig() {
+	public TmdbConfig() {
 	}
 
 	public String getKey() {

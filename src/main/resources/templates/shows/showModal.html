@@ -15,11 +15,11 @@
             <div class="modal-header">
                 <div class="modal-title">
                     <h5 th:text="${showDetails.title}"></h5>
-                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 0) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 1) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 2) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 3) ? 'starred' : ''"></span>
-                    <span class="fa fa-star" th:classappend="(${showDetails.myRating} > 4) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.starRating} > 0) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.starRating} > 1) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.starRating} > 2) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.starRating} > 3) ? 'starred' : ''"></span>
+                    <span class="fa fa-star" th:classappend="(${showDetails.starRating} > 4) ? 'starred' : ''"></span>
                     &nbsp;
                     <span style="font-weight: bold;" th:text="'(' + ${showDetails.showRating} + ')'"></span>
                     &nbsp;
@@ -51,7 +51,8 @@
                                             <span th:text="${showDetails.showRating}"></span>
                                         </td>
                                         <td style="padding-left: 20px; padding-right: 20px;">
-                                            <span style="font-weight: bold">Run Time: </span>
+                                            <span th:if="${showDetails.showType == 'Movie'}" style="font-weight: bold">Run Time: </span>
+                                            <span th:if="${showDetails.showType == 'TV'}" style="font-weight: bold">Episodes: </span>
                                             <span th:text="${showDetails.runtime}"></span>
                                         </td>
                                         <td>
@@ -62,7 +63,7 @@
                                 </table>
                             </div>
                             <div class="row" style="padding-top: 10px;"><span style="font-weight: bold">Contains:</span></div>
-                            <div class="row"><span th:text="${showDetails.ratingComponents}"></span></div>
+                            <div class="row"><span th:text="${showDetails.contents}"></span></div>
                         </div>
                     </div>
                 </div>

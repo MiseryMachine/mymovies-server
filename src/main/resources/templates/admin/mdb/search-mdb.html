@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/admin/adminTemplate"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Title</title>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        $(document).ready(function () {
+            // Update the active item in the nav bar
+            if ($("#homePage").length) {
+                $("#navHome").addClass("active");
+            }
+            else if ($("#showsPage").length) {
+                $("#navShows").addClass("active");
+            }
+            else if ($("#adminPage").length) {
+                $("#navAdmin").addClass("active");
+            }
+
+            var colDefs = [
+                {
+                    targets: [0,2,4],
+                    orderable: false
+                }
+            ];
+
+            $('#show-table').DataTable({
+                pagingType: 'full_numbers',
+                lengthMenu: [10,20,50],
+                dom: "<'row'<'col-sm-3'f><'col-sm-9'p>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'l><'col-sm-9'p>>",
+                columnDefs: colDefs
+            });
+        });
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div id="adminPage-search-mdb" layout:fragment="admin-content">
+    <h1 class="row">Search Shows</h1>
+
+    <form class="needs-validation" action="#" th:action="@{/admin/mdb/search-mdb}" th:object="${searchForm}" method="post">
+        <div class="form-row">
+            <div class="col-sm-9">
+                <div class="form-row">
+                    <div class="form-group col-sm-3">
+                        <label for="show-type-select">Type:</label>
+                        <select id="show-type-select" class="form-control" th:field="*{showType}">
+                            <option th:each="st : ${showTypes}"
+                                    th:value="${st}"
+                                    th:text="${st}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('showType')}" th:errors="*{showType}">Show Type Error</div>
+                    </div>
+                    <div class="form-group col-sm-9">
+                        <label for="title-text">Title:</label>
+                        <input id="title-text" type="text" name="title" class="form-control" th:field="*{title}" required="true"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 text-center">
+            <button id="search-button" type="submit" class="btn btn-primary">Search</button>
+            <button id="reset-button" type="reset" class="btn btn-default">Reset</button>
+        </div>
+    </form>
+    <p></p>
+    <h2 class="row">MDB Results</h2>
+    <div id="results-area" class="row">
+        <table id="show-table" class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col"></th>
+                <th scope="col">Title</th>
+                <th scope="col">Description</th>
+                <th scope="col">Release Date</th>
+                <th scope="col">Add</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="show : ${mdbShows}">
+                <td><img th:src="@{${show.posterPath}}"/></td>
+                <td th:text="${show.title}"></td>
+                <td th:text="${show.overview}"></td>
+                <td th:text="${show.releaseDate}"></td>
+                <td class="text-center">
+                    <!--<a href="#" th:href="@{/shows/edit-show/${show.id}}">-->
+                    <a href="#" th:href="@{${'/admin/mdb/add-show/' + show.id}}">
+                        <i class="fa fa-plus-square text-success" th:title="'Add ' + ${show.title}"></i>"
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

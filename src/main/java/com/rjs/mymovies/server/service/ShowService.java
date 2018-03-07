@@ -175,12 +175,12 @@ public class ShowService extends BaseService<Show, ShowRepository> {
 
                         break;
 
-                    case "rating":
+                    case "starRating":
                         Integer ratingValue = (Integer) params.get(paramName);
 
                         if (ratingValue != null) {
                             spec = Specifications.where(spec)
-                                .and(new DataSpecification<>(new NumericDateDataFilter("myRating", NumericDateDataFilter.GTE_OPERATOR, ratingValue)));
+                                .and(new DataSpecification<>(new NumericDateDataFilter("starRating", NumericDateDataFilter.GTE_OPERATOR, ratingValue)));
                         }
                         else {
                             LOGGER.info("Rating parameter is null.");

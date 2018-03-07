@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/layouts/default"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit Show</title>
+</head>
+<body>
+<div id="showsPage" layout:fragment="content">
+    <form action="#" th:action="@{/admin/edit-show}" th:object="${show}" method="post">
+        <div class="col-sm-12">
+            <div class="form-row">
+                <div class="form-group col-sm-9">
+                    <label for="title-text">Title:</label>
+                    <input id="title-text" type="text" name="title" class="form-control" th:field="*{title}"/>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="show-type-text">Type:</label>
+                    <input id="show-type-text" type="text" name="show-type" class="form-control" th:field="*{showType}" disabled="true" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-sm-3">
+                    <label for="show-rating-select">Show Rating:</label>
+                    <select id="show-rating-select" name="show-rating" class="form-control" th:field="*{showRating}">
+                        <option th:each="r : ${showForm.showRatings}"
+                                th:value="${r}"
+                                th:text="${r}"></option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="format-select">Format:</label>
+                    <select id="format-select" name="format" class="form-control" th:field="*{mediaFormat}">
+                        <option th:each="mFormat : ${showForm.mediaFormats}"
+                                th:value="${mFormat}"
+                                th:text="${mFormat}"></option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="tmdb-id-text">TMDB ID:</label>
+                    <input id="tmdb-id-text" type="text" name="tmdb-id" class="form-control" th:field="*{mdbId}"/>
+                </div>
+                <div class="form-group col-sm-3">
+                    <label for="imdb-id-text">IMDB ID:</label>
+                    <input id="imdb-id-text" type="text" name="imdb-id" class="form-control" th:field="*{imdbId}"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-sm-9">
+                    <div class="form-row">
+                        <div class="form-group col-sm-4">
+                            <label for="star-rating-select">Star Rating:</label>
+                            <select id="star-rating-select" name="star-rating" class="form-control" th:field="*{starRating}">
+                                <option th:each="sr : ${showForm.starRatings}"
+                                        th:value="${sr}"
+                                        th:text="${sr} + ' star'"></option>
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label th:if="${show.showType == 'Movie'}" for="runtime-text">Run Time:</label>
+                            <label th:if="${show.showType == 'TV'}" for="runtime-text">Num Episodes:</label>
+                            <input id="runtime-text" type="text" name="runtime" class="form-control" th:field="*{runtime}"/>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label for="release-date">Release Date:</label>
+                            <input id="release-date" type="date" name="release-date" class="form-control" th:field="*{releaseDate}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-sm-12">
+                            <label for="description-text">Description/Plot:</label>
+                            <textarea id="description-text" name="description" class="form-control"
+                                      rows="3" th:field="*{description}"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-sm-12">
+                            <label for="tag-line-text">Tag Line:</label>
+                            <input id="tag-line-text" type="text" name="tag-line" class="form-control" th:field="*{tagLine}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-sm-12">
+                            <label for="my-notes-text">My Notes:</label>
+                            <textarea id="my-notes-text" name="my-notes" class="form-control"
+                                      rows="3" th:field="*{myNotes}"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-row">
+                        <div class="form-group col-sm-12">
+                            <label for="contents-select">Contents:</label>
+                            <select id="contents-select" name="contents" class="form-control" multiple="multiple" size="5" th:field="*{contentsArray}">
+                                <option th:each="c : ${showForm.contents}"
+                                        th:value="${c}"
+                                        th:text="${c}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-sm-12">
+                            <label for="genres-select">Genres:</label>
+                            <select id="genres-select" name="genres" class="form-control" multiple="multiple" size="9" th:field="*{genres}">
+                                <option th:each="g : ${showForm.allGenres}"
+                                        th:value="${g}"
+                                        th:text="${g}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 text-center">
+            <button id="save-button" type="submit" class="btn btn-primary" name="action" value="save">Save</button>
+            <button id="cancel-button" type="submit" class="btn btn-default" name="action" value="cancel">Cancel</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

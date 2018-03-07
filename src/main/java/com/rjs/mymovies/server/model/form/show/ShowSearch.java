@@ -8,7 +8,7 @@ import java.util.Set;
 public class ShowSearch {
     private ShowType showType = null;
     private String title = "";
-    private int rating = 0;
+    private int starRating = 0;
     private String format = "";
 //    private List<String> genres = new ArrayList<>();
     private Set<String> genres = new LinkedHashSet<>();
@@ -33,12 +33,12 @@ public class ShowSearch {
         this.title = title;
     }
 
-    public int getRating() {
-        return rating;
+    public int getStarRating() {
+        return starRating;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setStarRating(int starRating) {
+        this.starRating = starRating;
     }
 
     public String getFormat() {

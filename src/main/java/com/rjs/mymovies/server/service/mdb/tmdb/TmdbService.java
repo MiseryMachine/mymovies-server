@@ -1,4 +1,4 @@
-package com.rjs.mymovies.server.repos.tmdb;
+package com.rjs.mymovies.server.service.mdb.tmdb;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,9 +9,9 @@ import com.rjs.mymovies.server.model.mdb.MdbGenre;
 import com.rjs.mymovies.server.model.mdb.MdbShow;
 import com.rjs.mymovies.server.model.mdb.MdbShowDetail;
 import com.rjs.mymovies.server.model.mdb.MdbShowListing;
-import com.rjs.mymovies.server.repos.MDBRepository;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
+import com.rjs.mymovies.server.service.mdb.MdbService;
 import com.rjs.mymovies.server.util.ImageUtil;
 import com.rjs.mymovies.server.util.web.RestClient;
 import com.rjs.mymovies.server.util.web.WebServiceException;
@@ -39,14 +39,14 @@ import java.util.stream.Collectors;
  * Date: 2017-07-06<br>
  * Time: 13:03<br>
  */
-@Service("mdbRepository")
-public class TMDBRepository implements MDBRepository {
-	private static final Logger LOGGER = Logger.getLogger(TMDBRepository.class.getName());
+@Service("tmdbService")
+public class TmdbService implements MdbService {
+	private static final Logger LOGGER = Logger.getLogger(TmdbService.class.getName());
 
 	@Autowired
 	private AppConfig appConfig;
 	@Autowired
-	private TMDBConfig tmdbConfig;
+	private TmdbConfig tmdbConfig;
 	@Autowired
 	private SimpleDateFormat dateFormat;
 	@Autowired
@@ -56,7 +56,7 @@ public class TMDBRepository implements MDBRepository {
 	@Autowired
 	private ShowTypeService showTypeService;
 
-	public TMDBRepository() {
+	public TmdbService() {
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class TMDBRepository implements MDBRepository {
 		urlParamsList.add("language=" + tmdbConfig.getLocale());
 
 		try {
-			String url = new TMDBUrl(tmdbConfig.getUrl()).addPath(tmdbConfig.getSearchPath()).addPath(mediumPath).getUrl() +
+			String url = new TmdbUrl(tmdbConfig.getUrl()).addPath(tmdbConfig.getSearchPath()).addPath(mediumPath).getUrl() +
 					"?" + urlParamsList.stream().collect(Collectors.joining("&"));
 			ResponseEntity<MdbShowListing> responseEntity = RestClient.exchange(HttpMethod.GET, url, null,
 				null, "", new ParameterizedTypeReference<MdbShowListing>() {
@@ -84,7 +84,7 @@ public class TMDBRepository implements MDBRepository {
 			if (showListing != null && showListing.results != null) {
 				results.addAll(showListing.results);
 				results.forEach(e -> {
-					e.posterPath = new TMDBUrl(tmdbConfig.getImageUrl()).addPath(tmdbConfig.getImageThumbPath()).getUrl() + e.posterPath;
+					e.posterPath = new TmdbUrl(tmdbConfig.getImageUrl()).addPath(tmdbConfig.getImageThumbPath()).getUrl() + e.posterPath;
 					if (StringUtils.isEmpty(e.releaseDate)) {
 						e.releaseDate = "Unknown";
 					}
@@ -112,7 +112,7 @@ public class TMDBRepository implements MDBRepository {
 			urlParamsList.add("api_key=" + tmdbConfig.getKey());
 			urlParamsList.add("language=" + tmdbConfig.getLocale());
 
-			String url = new TMDBUrl(tmdbConfig.getUrl())
+			String url = new TmdbUrl(tmdbConfig.getUrl())
 					.addPath(mediumPath)
 					.addPath("/" + mdbId)
 					.getUrl();
@@ -167,7 +167,7 @@ public class TMDBRepository implements MDBRepository {
 	@Override
 	public Set<String> getGenres(String showTypeName) {
 		String mediumPath = (StringUtils.isBlank(showTypeName) || "MOVIE".equalsIgnoreCase(showTypeName)) ? tmdbConfig.getMoviePath() : tmdbConfig.getTvPath();
-		String url = new TMDBUrl(tmdbConfig.getUrl())
+		String url = new TmdbUrl(tmdbConfig.getUrl())
 				.addPath(tmdbConfig.getGenrePath())
 				.addPath(mediumPath)
 				.addPath(tmdbConfig.getListPath())

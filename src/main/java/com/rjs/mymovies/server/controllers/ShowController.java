@@ -3,9 +3,9 @@ package com.rjs.mymovies.server.controllers;
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.mdb.MdbShow;
-import com.rjs.mymovies.server.repos.MDBRepository;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
+import com.rjs.mymovies.server.service.mdb.MdbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +28,7 @@ public class ShowController {
 	@Autowired
 	private ShowTypeService showTypeService;
 	@Autowired
-	private MDBRepository mdbRepository;
+	private MdbService mdbService;
 
 	public ShowController() {
 	}
@@ -45,7 +45,7 @@ public class ShowController {
 
 	@GetMapping("/add/{showTypeName}/{mdbId}")
 	public Show addMovieFromMdb(@PathVariable String showTypeName, @PathVariable String mdbId) {
-		return mdbRepository.addShow(showTypeName, mdbId);
+		return mdbService.addShow(showTypeName, mdbId);
 	}
 
 	@GetMapping("/deleteAll")
@@ -55,11 +55,11 @@ public class ShowController {
 
 	@GetMapping(value = "/mdb/search/{showTypeName}/{title}")
 	public Iterable<MdbShow> searchMdbShows(@PathVariable String showTypeName, @PathVariable String title) {
-		return mdbRepository.searchShows(showTypeName, title);
+		return mdbService.searchShows(showTypeName, title);
 	}
 
 	@GetMapping(value = "/mdb/genres/refresh/{showTypeName}")
 	public Iterable<String> refreshGenres(@PathVariable String showTypeName) {
-		return mdbRepository.getGenres(showTypeName);
+		return mdbService.getGenres(showTypeName);
 	}
 }
