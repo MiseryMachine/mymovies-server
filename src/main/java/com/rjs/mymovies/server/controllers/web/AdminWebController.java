@@ -71,6 +71,7 @@ public class AdminWebController {
 
     @PostMapping(value="/edit-show", params = {"action=cancel"})
     public ModelAndView cancelShowEdit(WebRequest webRequest, SessionStatus sessionStatus) {
+        String ctxPath = webRequest.getContextPath();
         sessionStatus.setComplete();
         webRequest.removeAttribute("show", WebRequest.SCOPE_SESSION);
 

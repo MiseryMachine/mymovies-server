@@ -23,8 +23,11 @@ public class ImageUtil {
     private static final Logger LOGGER = Logger.getLogger(ImageUtil.class.getName());
     private static final int THUMB_WIDTH = 92;
 
-    public static BufferedImage getThumbImage(BufferedImage original) {
-        return Scalr.resize(original, THUMB_WIDTH);
+    public static BufferedImage createThumbImage(BufferedImage original) {
+        double ratio = (double) THUMB_WIDTH / (double) original.getWidth();
+        double thumbHeight = ratio * (double) original.getHeight();
+
+        return Scalr.resize(original, Scalr.Method.ULTRA_QUALITY, THUMB_WIDTH, (int) thumbHeight);
     }
 
     public static void saveImage(URL imageUrl, String savePathStr, String imageName) {

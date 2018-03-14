@@ -152,7 +152,11 @@
             </thead>
             <tbody>
             <tr th:each="show : ${shows}">
-                <td><img th:src="@{${'/shows/poster-thumb/' + show.id}}"/></td>
+                <td>
+                    <a href="#" th:onclick="'openShowModal(' + ${show.id} + '); return false;'">
+                        <img th:src="@{${'/shows/poster-thumb/' + show.id}}" width="92" />
+                    </a>
+                </td>
                 <td><a href="#" th:onclick="'openShowModal(' + ${show.id} + '); return false;'"><span th:text="${show.title}"/></a></td>
                 <td th:text="${show.tagLine}"></td>
                 <td th:text="${show.genreText}"></td>

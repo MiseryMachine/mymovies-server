@@ -129,6 +129,8 @@ public class TmdbService implements MdbService {
 			MdbShowDetail tmdbMovie = responseEntity.getBody();
 
 			if (tmdbMovie != null) {
+				Set<String> genres = convertGenres(tmdbMovie.genres, showTypeName);
+
 				show = new Show();
 				show.setShowType(showTypeName);
 				show.setMdbId(String.valueOf(tmdbMovie.id));
@@ -136,9 +138,8 @@ public class TmdbService implements MdbService {
 				show.setTitle(tmdbMovie.title);
 				show.setTagLine(tmdbMovie.tagline);
 				show.setDescription(tmdbMovie.overview);
-				show.setGenres(convertGenres(tmdbMovie.genres, showTypeName));
+				show.setGenres(genres);
 				show.setRuntime(tmdbMovie.runtime);
-//				show.setImageUrl(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbMovie.posterPath);
 
 				if (!StringUtils.isBlank(tmdbMovie.releaseDate)) {
 					try {
@@ -180,8 +181,13 @@ public class TmdbService implements MdbService {
 			throw new IllegalStateException("Show must be saved prior to adding poster image.");
 		}
 
+		// Normal size poster
 		URL posterUrl = new URL(tmdbConfig.getImageUrl() + tmdbConfig.getImageNormalPath() + tmdbPosterPath);
 		ImageUtil.saveImage(posterUrl, appConfig.getLocalImagePath(String.valueOf(show.getId())), "poster");
+
+		// Poster thumb nail
+		posterUrl = new URL(tmdbConfig.getImageUrl() + tmdbConfig.getImageThumbPath() + tmdbPosterPath);
+		ImageUtil.saveImage(posterUrl, appConfig.getLocalImagePath(String.valueOf(show.getId())), "poster_thumb");
 	}
 
 	private Set<String> getGenres(String serviceUrl, String showTypeName) {
@@ -234,54 +240,22 @@ public class TmdbService implements MdbService {
 		Set<String> genres = new LinkedHashSet<>();
 		Set<String> curGenres = showType.getGenres();
 
+		if (curGenres == null) {
+			curGenres = new HashSet<>();
+			showType.setGenres(curGenres);
+		}
+
+		int initialSize = curGenres.size();
+
 		if (mdbGenres != null) {
-			boolean saveShowType = false;
+			genres = mdbGenres.stream().map(g -> g.name).collect(Collectors.toSet());
+			curGenres.addAll(genres);
 
-			for (MdbGenre mdbGenre : mdbGenres) {
-				genres.add(mdbGenre.name);
-
-				if (!curGenres.contains(mdbGenre.name)) {
-					curGenres.add(mdbGenre.name);
-
-					saveShowType = true;
-				}
-			}
-
-			if (saveShowType) {
-				showType = showTypeService.save(showType);
+			if (initialSize != curGenres.size()) {
+				showTypeService.save(showType);
 			}
 		}
 
 		return genres;
 	}
-
-/*
-	private String buildURL(String serviceUrl) throws IOException {
-		return buildURL(serviceUrl, null, null);
-	}
-
-	private String buildURL(String serviceUrl, Map<String, String> urlParams) throws IOException {
-		return buildURL(serviceUrl, null, urlParams);
-	}
-
-	private String buildURL(String serviceUrl, List<String> pathParams, Map<String, String> urlParams) throws IOException {
-		String pathParamsUrl = "";
-
-		if (pathParams != null) {
-			for (String pathParam : pathParams) {
-				pathParamsUrl += "/" + pathParam;
-			}
-		}
-
-		String url = tmdbConfig.url + serviceUrl + pathParamsUrl + "?api_key=" + tmdbConfig.apiKey;
-
-		if (urlParams != null) {
-			for (String key : urlParams.keySet()) {
-				url += "&" + key + "=" + urlParams.get(key);
-			}
-		}
-
-		return url;
-	}
-*/
 }

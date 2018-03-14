@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
@@ -35,6 +36,10 @@ public class ShowService extends BaseService<Show, ShowRepository> {
 
     @Autowired
     private AppConfig appConfig;
+    @Autowired
+    private File defaultBoxArt;
+    @Autowired
+    private File defaultBoxArtThumb;
 
     @Autowired
     public ShowService(ShowRepository showRepository) {
@@ -87,30 +92,57 @@ public class ShowService extends BaseService<Show, ShowRepository> {
             imageType = ImageUtil.JPEG;
         }
 
-        if (posterFile.exists()) {
-            try {
-                if (thumb) {
-                    File thumbFile = new File(localPosterPath, "poster_thumb" + ext);
+        File boxArtFile = null;
+        FileInputStream fis = null;
+        byte[] imgData = new byte[0];
+
+        try {
+            if (thumb) {
+                if (posterFile.exists()) {
+                    boxArtFile = new File(localPosterPath, "poster_thumb" + ext);
 
                     // Generate a thumb image from poster, if necessary.
-                    if (!thumbFile.exists()) {
+                    if (!boxArtFile.exists()) {
                         BufferedImage poster = ImageIO.read(posterFile);
-                        BufferedImage thumbImage = ImageUtil.getThumbImage(poster);
-                        ImageIO.write(thumbImage, imageType, new FileOutputStream(thumbFile));
+                        BufferedImage thumbImage = ImageUtil.createThumbImage(poster);
+                        ImageIO.write(thumbImage, imageType, new FileOutputStream(boxArtFile));
                     }
 
-                    return IOUtils.toByteArray(new FileInputStream(thumbFile));
+                    return IOUtils.toByteArray(new FileInputStream(boxArtFile));
                 }
-                else {
-                    return IOUtils.toByteArray(new FileInputStream(posterFile));
+                else if (defaultBoxArtThumb != null) {
+                    boxArtFile = defaultBoxArtThumb;
                 }
             }
-            catch (IOException e) {
-                LOGGER.warning("Unable to load poster image from file: " + posterFile.getAbsolutePath());
+            else {
+                if (posterFile.exists()) {
+                    boxArtFile = posterFile;
+                }
+                else if (defaultBoxArt != null) {
+                    boxArtFile = defaultBoxArt;
+                }
+            }
+
+            if (boxArtFile != null) {
+                fis = new FileInputStream(boxArtFile);
+                imgData = IOUtils.toByteArray(new FileInputStream(boxArtFile));
+            }
+        }
+        catch (IOException e) {
+            LOGGER.warning("Unable to load poster image from file: " + posterFile.getAbsolutePath());
+        }
+        finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                }
+                catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Error closing file input stream for " + boxArtFile.getName(), e);
+                }
             }
         }
 
-        return new byte[0];
+        return imgData;
     }
 
     private Specification<Show> buildShowSpecification(String showTypeName, Map<String, Object> params) {

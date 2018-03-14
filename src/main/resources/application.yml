@@ -1,5 +1,4 @@
 my-movies:
-#  date-pattern: yyyy-MM-dd
   local-file-path: C:/projects/mymovies-server/app-files
 server:
   context-path: /mymovies
@@ -28,9 +27,9 @@ spring:
       ddl-auto: none
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/rjsmdb
-    username: rjsmdb_root
-    password: rjsmdb_admin
+    url: jdbc:mysql://localhost:3306/my_movies
+    username: rjs_root
+    password: rjs_admin
 ---
 spring:
   profiles:
@@ -41,3 +40,4 @@ spring:
       ddl-auto: create
   datasource:
     driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1

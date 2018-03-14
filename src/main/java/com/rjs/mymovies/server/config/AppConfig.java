@@ -5,8 +5,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <p/>
@@ -19,8 +24,9 @@ import java.text.SimpleDateFormat;
 @ConfigurationProperties("my-movies")
 public class AppConfig {
 	public static final String DATE_PATTERN = "yyyy-MM-dd";
-	private static final String SHOW_PATH = "/shows";
-	private static final String IMAGE_PATH = "/images";
+
+	private static final Logger LOGGER = Logger.getLogger(AppConfig.class.getName());
+
 	private String localFilePath;
 
 	public AppConfig() {
@@ -44,8 +50,28 @@ public class AppConfig {
 		return new ModelMapper();
 	}
 
-	public String getLocalImagePath(String showId) {
-		return localFilePath + SHOW_PATH + "/" + showId + IMAGE_PATH;
+	@Bean
+	public File defaultBoxArt() {
+		try {
+			return new ClassPathResource("/static/img/default-movie-box.png").getFile();
+		}
+		catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Cannot locate default box art image.", e);
+		}
+
+		return null;
+	}
+
+	@Bean
+	public File defaultBoxArtThumb() {
+		try {
+			return new ClassPathResource("/static/img/default-movie-box_thumb.png").getFile();
+		}
+		catch (IOException e) {
+			LOGGER.log(Level.SEVERE, "Cannot locate default box art thumb image.", e);
+		}
+
+		return null;
 	}
 
 	public String getLocalFilePath() {
@@ -54,5 +80,9 @@ public class AppConfig {
 
 	public void setLocalFilePath(String localFilePath) {
 		this.localFilePath = localFilePath;
+	}
+
+	public String getLocalImagePath(String showId) {
+		return localFilePath + "/shows/" + showId + "/images";
 	}
 }
