@@ -6,9 +6,9 @@ import com.rjs.mymovies.server.model.DataConstants;
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.User;
-import com.rjs.mymovies.server.repos.UserRepository;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
+import com.rjs.mymovies.server.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -32,16 +31,13 @@ public class InitialDataConfig {
     @Autowired
     private ShowService showService;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder encoder;
+    private UserService userService;
 
     public InitialDataConfig() {
     }
 
     @Bean
     public String initData() {
-//        initUsers();
         ResourceLoader resourceLoader = new FileSystemResourceLoader();
         Resource dataResource = resourceLoader.getResource("classpath:show-data.json");
 
@@ -75,7 +71,7 @@ public class InitialDataConfig {
 
     private void initUsers(User[] users) {
         for (User user : users) {
-            User curUser = userRepository.findByUsername(user.getUsername());
+            User curUser = userService.getUser(user.getUsername());
 
             if (curUser != null) {
                 LOGGER.info("User found [" + curUser.getUsername() + "].");
@@ -84,10 +80,10 @@ public class InitialDataConfig {
                 String pw = user.getPassword();
 
                 if (StringUtils.isNotBlank(pw)) {
-                    user.setPassword(encoder.encode(pw));
+                    user.setPassword(userService.encode(pw));
                 }
 
-                user = userRepository.save(user);
+                user = userService.save(user);
                 LOGGER.info("User created [" + user.getUsername() + "].");
             }
         }

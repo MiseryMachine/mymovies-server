@@ -3,7 +3,6 @@ package com.rjs.mymovies.server.model;
 import com.rjs.mymovies.server.model.security.Role;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -16,8 +15,10 @@ import java.util.Set;
  */
 @Entity
 public class User extends AbstractElement {
-	@NotNull(message = "User must have a username.")
 	private String username;
+	private String firstName;
+	private String lastName;
+	private String email;
 	private String password;
 	private boolean enabled = true;
 	private Set<Role> roles = new LinkedHashSet<>();
@@ -32,6 +33,32 @@ public class User extends AbstractElement {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Column(name = "first_name")
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	@Column(name = "last_name")
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getPassword() {

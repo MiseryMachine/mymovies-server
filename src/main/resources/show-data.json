@@ -1,6 +1,8 @@
 {
   "users": [
     {
+      "firstName": "Randy",
+      "lastName": "Strobel",
       "username": "admin",
       "password": "admin",
       "enabled": true,

@@ -36,11 +36,6 @@ public class AdminWebController {
     public AdminWebController() {
     }
 
-//    @GetMapping("/adminUsers")
-    public String userAdmin() {
-        return "adminUsers";
-    }
-
     @GetMapping("/edit-show/{showId}")
     public ModelAndView getShowToEdit(@PathVariable Long showId) {
         Show show = showService.get(showId);

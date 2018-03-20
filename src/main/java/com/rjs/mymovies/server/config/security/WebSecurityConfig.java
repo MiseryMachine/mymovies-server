@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
 //                .antMatchers("/rest/**").hasRole("REST_USER")
                 .antMatchers("/shows/**").hasRole("USER")
-                .antMatchers("/", "/home", "/rest/**", "/webjars/**", "/css/**", "/img/**", "/js/**", "/datatables/**").permitAll()
+                .antMatchers("/", "/home", "/user/registration", "/rest/**", "/webjars/**", "/css/**", "/img/**", "/js/**", "/datatables/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -42,7 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .logout()
                 .deleteCookies("JESSSIONID")
-                .permitAll();
+                .permitAll()
+            .logoutSuccessUrl("/home");
     }
 
     @Bean

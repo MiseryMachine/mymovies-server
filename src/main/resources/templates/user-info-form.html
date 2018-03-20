@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/layouts/default"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Sign Up</title>
+</head>
+<body>
+<div id="showsPage" layout:fragment="content">
+    <h1>User Registration</h1>
+    <form action="#" th:action="@{/admin/user/registration}" th:object="${user}" method="post">
+        <div class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="first-name-field">First Name:</label>
+                <input id="first-name-field" type="text" name="username" class="form-control" th:field="*{firstName}"/>
+                <p th:each="error: ${#fields.errors('firstName')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="last-name-field">Last Name:</label>
+                <input id="last-name-field" type="text" name="username" class="form-control" th:field="*{lastName}"/>
+                <p th:each="error : ${#fields.errors('lastName')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="username-field">User Name:</label>
+                <input id="username-field" type="text" name="username" class="form-control" th:field="*{username}" th:disabled="NOT *{newUser}"/>
+                <p th:each="error : ${#fields.errors('username')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="email-field">Email:</label>
+                <input id="email-field" type="text" name="username" class="form-control" th:field="*{email}"/>
+                <p th:each="error : ${#fields.errors('email')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+        </div>
+        <div sec:authorize="hasRole('ROLE_ADMIN')" class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="roles-select">Roles:</label>
+                <select id="roles-select" name="rolesSelect" class="form-control" multiple="multiple" size="4" th:field="*{roles}">
+                    <option th:each="r : ${appRoles}"
+                            th:value="${r}"
+                            th:text="${r}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="password-field">Password:</label>
+                <input id="password-field" type="password" name="password" class="form-control" th:field="*{password}"/>
+                <p th:each="error : ${#fields.errors('password')}"
+                   th:text="${error}">Validation error</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-sm-6">
+                <label for="confirm-password-field">Confirm Password:</label>
+                <input id="confirm-password-field" type="password" name="password" class="form-control" th:field="*{confirmPassword}"/>
+            </div>
+        </div>
+        <div class="col-sm-6 text-center">
+            <button th:if="*{newUser}" id="create-button" type="submit" class="btn btn-primary" name="action" value="create">Save</button>
+            <button th:if="NOT *{newUser}" id="update-button" type="submit" class="btn btn-primary" name="action" value="update">Save</button>
+            <button id="cancel-button" type="submit" class="btn btn-default" name="action" value="cancel">Cancel</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

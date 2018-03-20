@@ -12,7 +12,7 @@
 </head>
 <body>
 <div id="homePage" layout:fragment="content">
-    <h1>Welcome to My Movies<span sec:authorize="isAuthenticated()" th:text="', ' + ${#authentication.name}"></span></h1>
+    <h1>Welcome to My Movies<span sec:authorize="isAuthenticated()" th:text="', ' + ${#authentication.principal.user.firstName}"></span></h1>
     <div sec:authorize="!isAuthenticated()" class="row">
         <table>
             <tr>

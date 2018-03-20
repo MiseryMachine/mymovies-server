@@ -6,6 +6,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -54,26 +55,32 @@ public abstract class BaseService<E extends AbstractElement, R extends BaseRepos
         return repository.findAll(ids);
     }
 
+    @Transactional
     public E save(E element) {
         return repository.save(element);
     }
 
+    @Transactional
     public List<E> save(Iterable<E> elements) {
         return repository.save(elements);
     }
 
+    @Transactional
     public void delete(E element) {
         delete(element.getId());
     }
 
+    @Transactional
     public void delete(Long id) {
         repository.delete(id);
     }
 
+    @Transactional
     public void delete(Iterable<E> elements) {
         repository.deleteInBatch(elements);
     }
 
+    @Transactional
     public void deleteAll() {
         repository.deleteAllInBatch();
     }
