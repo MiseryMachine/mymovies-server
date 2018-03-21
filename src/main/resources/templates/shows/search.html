@@ -8,8 +8,8 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Search Shows</title>
-    <link rel="stylesheet" th:href="@{/css/rating.css}"/>
-    <script th:inline="javascript">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/rating.css}"/>
+    <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
             var isAdmin = /*[[${@adminService.hasRoles(#httpServletRequest, 'ROLE_ADMIN')}]]*/ false;

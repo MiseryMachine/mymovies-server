@@ -8,7 +8,7 @@ spring:
       enabled: false
 tmdb:
   api:
-    key: <<your TMDB API key here>>
+#    key: <<your TMDB API key here>>
     locale: en-US
     url: https://api.themoviedb.org/3
     image-url: http://image.tmdb.org/t/p

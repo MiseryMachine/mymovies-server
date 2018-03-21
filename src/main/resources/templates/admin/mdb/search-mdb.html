@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Title</title>
-    <script th:inline="javascript">
+    <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         $(document).ready(function () {
             // Update the active item in the nav bar
@@ -26,6 +26,10 @@
                 {
                     targets: [0,2,4],
                     orderable: false
+                },
+                {
+                	targets: [3],
+	                width: "85px"
                 }
             ];
 
@@ -90,8 +94,8 @@
                 <td th:text="${show.releaseDate}"></td>
                 <td class="text-center">
                     <!--<a href="#" th:href="@{/shows/edit-show/${show.id}}">-->
-                    <a href="#" th:href="@{${'/admin/mdb/add-show/' + show.id}}">
-                        <i class="fa fa-plus-square text-success" th:title="'Add ' + ${show.title}"></i>"
+                    <a href="#" th:href="@{${'/admin/mdb/add-show/' + searchForm.showType + '/' + show.id}}">
+                        <i class="fa fa-plus-square text-success" th:title="'Add ' + ${show.title}"></i>
                     </a>
                 </td>
             </tr>

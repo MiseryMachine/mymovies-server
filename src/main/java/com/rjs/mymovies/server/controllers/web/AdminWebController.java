@@ -100,9 +100,10 @@ public class AdminWebController {
         return mav;
     }
 
-    @PostMapping("/mdb/add-show/{mdbId}")
-    public ModelAndView addMdbShow(@PathVariable String mdbId, @ModelAttribute("searchForm") MdbSearchForm searchForm) {
-        Show show = mdbService.addShow(searchForm.getShowType(), mdbId);
+//    @PostMapping("/mdb/add-show/{mdbId}")
+    @GetMapping("/mdb/add-show/{showType}/{mdbId}")
+    public ModelAndView addMdbShow(@PathVariable String showType, @PathVariable String mdbId) {
+        Show show = mdbService.addShow(showType, mdbId);
         ModelAndView mav = new ModelAndView("/admin/edit-show");
 
         mav.getModel().put("showForm", buildShowForm(show.getShowType()));
