@@ -3,6 +3,8 @@ package com.rjs.mymovies.server.repos;
 
 import com.rjs.mymovies.server.model.User;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * <p/>
@@ -14,4 +16,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface UserRepository extends BaseRepository<User>, JpaSpecificationExecutor<User> {
 	User findByUsername(String username);
 	User findByUsernameAndPassword(String username, String password);
+
+	@Query("SELECT u.password FROM User u WHERE u.username = :username")
+	String getPasswordByUsername(@Param("username") String username);
 }

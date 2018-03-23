@@ -1,16 +1,20 @@
 package com.rjs.mymovies.server.controllers;
 
+import com.rjs.mymovies.server.model.DataConstants;
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.ShowType;
-import com.rjs.mymovies.server.model.mdb.MdbShow;
+import com.rjs.mymovies.server.model.dto.ShowDto;
+import com.rjs.mymovies.server.model.form.show.ShowSearch;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
-import com.rjs.mymovies.server.service.mdb.MdbService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,46 +24,73 @@ import java.util.stream.Collectors;
  * Date: 2017-07-06<br>
  * Time: 14:42<br>
  */
-@RestController
-@RequestMapping(path = "/rest/shows")
-public class ShowController {
+public abstract class ShowController {
+	private static final Sort DEFAULT_SORT = new Sort(
+		new Sort.Order(Sort.Direction.DESC, "starRating"),
+		new Sort.Order(Sort.Direction.ASC, "title"));
+
+	protected ShowService showService;
 	@Autowired
-	private ShowService showService;
+	protected ShowTypeService showTypeService;
 	@Autowired
-	private ShowTypeService showTypeService;
+	protected ModelMapper modelMapper;
 	@Autowired
-	private MdbService mdbService;
+	protected SimpleDateFormat dateFormat;
 
-	public ShowController() {
+	@Autowired
+	protected ShowController(ShowService showService) {
+		this.showService = showService;
 	}
 
-	@GetMapping("/genres")
-	public Map<String, Set<String>> getGenres() {
-		return showTypeService.getAll().stream().collect(Collectors.toMap(ShowType::getName, ShowType::getGenres));
+	protected Map<String, Object> buildInitialModel() {
+		ShowSearch showSearch = new ShowSearch();
+
+		showSearch.setShowType(showTypeService.get("Movie"));
+		showSearch.setFormat(DataConstants.MEDIA_FORMATS[0]);
+		showSearch.setStarRating(DataConstants.STAR_RATINGS[DataConstants.STAR_RATINGS.length - 1]);
+		showSearch.setTitle("");
+
+		Map<String, Object> model = new HashMap<>();
+
+		model.put("showTypes", showTypeService.getAll());
+		model.put("starRatings", DataConstants.STAR_RATINGS);
+		model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
+		model.put("showSearchFilter", showSearch);
+		model.put("shows", null);
+
+		return model;
 	}
 
-	@PostMapping("/search/{showTypeName}")
-	public Iterable<Show> searchMyShows(@PathVariable String showTypeName, @RequestBody Map<String, Object> params) {
-		return showService.searchShows(showTypeName, params);
+	protected List<Show> getShowData(ShowSearch showSearch) {
+		ShowType showType = showSearch.getShowType();
+
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("title", showSearch.getTitle());
+		paramMap.put("starRating", showSearch.getStarRating());
+		paramMap.put("mediaFormat", showSearch.getFormat());
+		paramMap.put("genres", showSearch.getGenres());
+
+		return showService.searchShows(showType.getName(), paramMap, DEFAULT_SORT);
 	}
 
-	@GetMapping("/add/{showTypeName}/{mdbId}")
-	public Show addMovieFromMdb(@PathVariable String showTypeName, @PathVariable String mdbId) {
-		return mdbService.addShow(showTypeName, mdbId);
+	protected Map<String, Object> buildSearchModel(ShowSearch showSearch, List<Show> searchResults) {
+		Map<String, Object> model = new HashMap<>();
+		List<ShowDto> showDtos = null;
+
+		if (searchResults != null && !searchResults.isEmpty()) {
+			showDtos = searchResults.stream().map(this::convertToShowDto).collect(Collectors.toList());
+		}
+
+		model.put("showTypes", showTypeService.getAll());
+		model.put("starRatings", DataConstants.STAR_RATINGS);
+		model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
+		model.put("showSearchFilter", showSearch);
+		model.put("shows", showDtos);
+
+		return model;
 	}
 
-	@GetMapping("/deleteAll")
-	public void removeAllShows() {
-		showService.deleteAll();
-	}
-
-	@GetMapping(value = "/mdb/search/{showTypeName}/{title}")
-	public Iterable<MdbShow> searchMdbShows(@PathVariable String showTypeName, @PathVariable String title) {
-		return mdbService.searchShows(showTypeName, title);
-	}
-
-	@GetMapping(value = "/mdb/genres/refresh/{showTypeName}")
-	public Iterable<String> refreshGenres(@PathVariable String showTypeName) {
-		return mdbService.getGenres(showTypeName);
+	protected ShowDto convertToShowDto(Show show) {
+		return modelMapper.map(show, ShowDto.class);
 	}
 }
