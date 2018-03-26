@@ -40,11 +40,20 @@ public class ImageUtil {
         File savePath = new File(savePathStr);
 
         if (!savePath.exists()) {
-            LOGGER.severe("Saving image error: " + savePathStr + " does not exist.");
+            if (savePath.mkdirs()) {
+                LOGGER.info("Created local image path: " + savePathStr + ".");
+            }
+            else {
+                LOGGER.severe("Unable to create local image path: " + savePathStr + ".");
+
+                return;
+            }
         }
 
         if (!savePath.isDirectory()) {
             LOGGER.severe("Saving image error: " + savePathStr + " is not a directory.");
+
+            return;
         }
 
         saveImage(imageUrl, savePath, imageName);
