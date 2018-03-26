@@ -1,15 +1,10 @@
 package com.rjs.mymovies.server.controllers.web;
 
+import com.rjs.mymovies.server.controllers.AdminController;
 import com.rjs.mymovies.server.model.DataConstants;
 import com.rjs.mymovies.server.model.Show;
-import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.form.mdb.MdbSearchForm;
-import com.rjs.mymovies.server.model.form.show.ShowForm;
 import com.rjs.mymovies.server.model.mdb.MdbShow;
-import com.rjs.mymovies.server.service.ShowService;
-import com.rjs.mymovies.server.service.ShowTypeService;
-import com.rjs.mymovies.server.service.mdb.MdbService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +14,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @SessionAttributes("show")
 @RequestMapping("/admin")
-public class AdminWebController {
-    @Autowired
-    private MdbService mdbService;
-    @Autowired
-    private ShowService showService;
-    @Autowired
-    private ShowTypeService showTypeService;
-
+public class AdminWebController extends AdminController {
     public AdminWebController() {
     }
 
@@ -92,7 +80,7 @@ public class AdminWebController {
         mav.getModel().put("showTypes", DataConstants.SHOW_TYPES);
 
         if (!bindingResult.hasErrors()) {
-            Iterable<MdbShow> mdbShows = mdbService.searchShows(searchForm.getShowType(), searchForm.getTitle());
+            List<MdbShow> mdbShows = mdbService.searchShows(searchForm.getShowType(), searchForm.getTitle());
 
             mav.getModel().put("mdbShows", mdbShows);
         }
@@ -110,30 +98,5 @@ public class AdminWebController {
         mav.getModel().put("show", show);
 
         return mav;
-    }
-
-    private ShowForm buildShowForm(String showTypeValue) {
-        ShowForm showForm = new ShowForm();
-        ShowType showType;
-
-        showForm.setShowTypes(showTypeService.getAll());
-
-        if (showTypeValue.equals("Movie")) {
-            showForm.setShowRatings(DataConstants.MOVIE_RATINGS);
-            showForm.setContents(DataConstants.MOVIE_RATING_COMPONENTS);
-            showType = showTypeService.get("Movie");
-        }
-        else {
-            showForm.setShowRatings(DataConstants.TV_RATINGS);
-            showForm.setContents(DataConstants.TV_RATING_COMPONENTS);
-            showType = showTypeService.get("TV");
-        }
-
-        if (showType != null && showType.getGenres() != null) {
-            showForm.getAllGenres().addAll(showType.getGenres());
-            Collections.sort(showForm.getAllGenres());
-        }
-
-        return showForm;
     }
 }

@@ -1,33 +1,48 @@
 package com.rjs.mymovies.server.controllers;
 
-import com.rjs.mymovies.server.model.User;
-import com.rjs.mymovies.server.service.AdminService;
+import com.rjs.mymovies.server.model.DataConstants;
+import com.rjs.mymovies.server.model.ShowType;
+import com.rjs.mymovies.server.model.form.show.ShowForm;
+import com.rjs.mymovies.server.service.ShowService;
+import com.rjs.mymovies.server.service.ShowTypeService;
+import com.rjs.mymovies.server.service.mdb.MdbService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Collections;
 
-@RestController
-@RequestMapping(path = "/admin")
-public class AdminController {
-    private AdminService adminService;
-
+public abstract class AdminController {
     @Autowired
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    protected MdbService mdbService;
+    @Autowired
+    protected ShowService showService;
+    @Autowired
+    protected ShowTypeService showTypeService;
+
+    protected AdminController() {
     }
 
-    @GetMapping("/users/list")
-    public List<User> getAllUsers() {
-        return adminService.getUserList(null);
-    }
+    protected ShowForm buildShowForm(String showTypeValue) {
+        ShowForm showForm = new ShowForm();
+        ShowType showType;
 
-    @GetMapping("/users/paged")
-    public Page<User> getAllUsersPaged(@RequestParam(name = "pageNum", required = false, defaultValue = "0") int pageNumber) {
-        return adminService.getUsersPaged(null, pageNumber, 5);
+        showForm.setShowTypes(showTypeService.getAll());
+
+        if (showTypeValue.equals("Movie")) {
+            showForm.setShowRatings(DataConstants.MOVIE_RATINGS);
+            showForm.setContents(DataConstants.MOVIE_RATING_COMPONENTS);
+            showType = showTypeService.get("Movie");
+        }
+        else {
+            showForm.setShowRatings(DataConstants.TV_RATINGS);
+            showForm.setContents(DataConstants.TV_RATING_COMPONENTS);
+            showType = showTypeService.get("TV");
+        }
+
+        if (showType != null && showType.getGenres() != null) {
+            showForm.getAllGenres().addAll(showType.getGenres());
+            Collections.sort(showForm.getAllGenres());
+        }
+
+        return showForm;
     }
 }

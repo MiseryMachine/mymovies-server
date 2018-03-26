@@ -60,7 +60,7 @@ public class TmdbService implements MdbService {
 	}
 
 	@Override
-	public Iterable<MdbShow> searchShows(String showTypeName, String title) {
+	public List<MdbShow> searchShows(String showTypeName, String title) {
 		List<MdbShow> results = new ArrayList<>();
 		String mediumPath = "TV".equalsIgnoreCase(showTypeName) ? tmdbConfig.getTvPath() : tmdbConfig.getMoviePath();
 		List<String> urlParamsList = new ArrayList<>();
