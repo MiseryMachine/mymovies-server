@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorator="/layouts/default"
 >
@@ -12,20 +10,8 @@
 </head>
 <body>
 <div id="homePage" layout:fragment="content">
-    <h1>Welcome to My Movies<span sec:authorize="isAuthenticated()" th:text="', ' + ${#authentication.principal.user.firstName}"></span></h1>
-    <div sec:authorize="!isAuthenticated()" class="row">
-        <table>
-            <tr>
-                <td><a class="btn btn-primary" th:href="@{/login}">Login</a></td>
-                <td><a class="btn btn-success" href="#">Sign Up</a></td>
-            </tr>
-        </table>
-    </div>
-    <div sec:authorize="isAuthenticated()" class="row">
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" class="btn btn-primary" value="Log Out"/>
-        </form>
-    </div>
+    <h1>Welcome to My Movies!</h1>
+    <h4>A simple and fast way to lookup movies or shows that I own.</h4>
 </div>
 </body>
 </html>

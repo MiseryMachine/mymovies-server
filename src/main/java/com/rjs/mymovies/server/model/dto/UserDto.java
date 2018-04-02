@@ -1,13 +1,11 @@
 package com.rjs.mymovies.server.model.dto;
 
-import com.rjs.mymovies.server.config.annotation.PasswordMatches;
-import com.rjs.mymovies.server.config.annotation.ValidEmail;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Set;
 
-@PasswordMatches
 public class UserDto {
     @NotNull(message = "First name is required.")
     @NotEmpty(message = "First name is required.")
@@ -17,7 +15,7 @@ public class UserDto {
     private String lastName;
     @NotNull(message = "Email is required.")
     @NotEmpty(message = "Email is required.")
-    @ValidEmail
+    @Pattern(regexp = "^[_A-Za-z0-9-+]+(.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(.[A-Za-z0-9]+)*(.[A-Za-z]{2,})$", message = "Invalid email address.")
     private String email;
     @NotNull(message = "Username is required.")
     @NotEmpty(message = "Username is required.")

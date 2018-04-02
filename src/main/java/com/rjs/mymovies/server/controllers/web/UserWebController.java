@@ -1,5 +1,6 @@
 package com.rjs.mymovies.server.controllers.web;
 
+import com.rjs.mymovies.server.controllers.UserController;
 import com.rjs.mymovies.server.model.User;
 import com.rjs.mymovies.server.model.dto.UserDto;
 import com.rjs.mymovies.server.model.security.Role;
@@ -14,22 +15,64 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/user")
-public class UserWebController {
-    private UserService userService;
-
+public class UserWebController extends UserController {
     @Autowired
     public UserWebController(UserService userService) {
-        this.userService = userService;
+        super(userService);
+    }
+
+    @GetMapping("/login-signup")
+    public String getLoginSignUp(Model model) {
+        model.addAttribute("newUser", new UserDto());
+        model.addAttribute("newUserMessage", "");
+
+        return "user/login-signup";
+    }
+
+    @PostMapping(value = "/login-signup", params = "action=signup")
+    public ModelAndView registerUser(@ModelAttribute("newUser") @Valid UserDto userDto, BindingResult bindingResult, WebRequest webRequest, Errors errors) {
+        boolean hasErrors = bindingResult.hasErrors();
+
+        if (!hasErrors) {
+            if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
+                bindingResult.rejectValue("confirmPassword", "password.confirm", "Passwords do not match.");
+                hasErrors = true;
+            }
+        }
+
+        if (!hasErrors) {
+            if (userService.userExists(userDto.getUsername())) {
+                bindingResult.rejectValue("username", "username.exists", "Username already used.");
+                hasErrors = true;
+            }
+        }
+
+        Map<String, Object> model = new HashMap<>();
+
+        if (!hasErrors) {
+            User user = userService.createUser(userDto);
+            model.put("newUserMessage", "User " + user.getUsername() + " created.");
+            model.put("newUser", new UserDto());
+        }
+        else {
+            userDto.setPassword("");
+            userDto.setConfirmPassword("");
+            model.put("newUser", userDto);
+        }
+
+        return new ModelAndView("user/login-signup", model);
     }
 
     @GetMapping("/registration")
     public String showUserRegistration(Model model) {
         model.addAttribute("appRoles", Role.getRoleText());
-        model.addAttribute("user", new UserDto());
+        model.addAttribute("newUser", new UserDto());
 
         return "user-info-form";
     }

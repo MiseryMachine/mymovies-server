@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +57,8 @@ public abstract class ShowController {
 		model.put("starRatings", DataConstants.STAR_RATINGS);
 		model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
 		model.put("showSearchFilter", showSearch);
-		model.put("shows", null);
+		model.put("numResults", 0);
+		model.put("shows", new ArrayList<>());
 
 		return model;
 	}
@@ -75,16 +77,20 @@ public abstract class ShowController {
 
 	protected Map<String, Object> buildSearchModel(ShowSearch showSearch, List<Show> searchResults) {
 		Map<String, Object> model = new HashMap<>();
-		List<ShowDto> showDtos = null;
+		List<ShowDto> showDtos;
 
 		if (searchResults != null && !searchResults.isEmpty()) {
 			showDtos = searchResults.stream().map(this::convertToShowDto).collect(Collectors.toList());
+		}
+		else {
+			showDtos = new ArrayList<>();
 		}
 
 		model.put("showTypes", showTypeService.getAll());
 		model.put("starRatings", DataConstants.STAR_RATINGS);
 		model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
 		model.put("showSearchFilter", showSearch);
+		model.put("numResults", showDtos.size());
 		model.put("shows", showDtos);
 
 		return model;

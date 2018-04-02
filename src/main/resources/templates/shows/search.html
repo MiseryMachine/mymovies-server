@@ -136,8 +136,8 @@
         </div>
     </form>
     <p></p>
-    <h2 class="row">Search Results</h2>
-    <div id="results-area" class="row">
+    <div id="results-area" class="row" th:if="${numResults > 0}">
+        <h4 class="row" th:text="${'Shows Found: ' + numResults}"></h4>
         <table id="show-table" class="table table-striped">
             <thead class="thead-dark">
             <tr>
@@ -177,6 +177,9 @@
             </tr>
             </tbody>
         </table>
+    </div>
+    <div id="no-results" class="row" th:if="${numResults &lt;= 0}">
+        <h4>No results found.</h4>
     </div>
     <div id="show-modal-holder"></div>
 </div>
