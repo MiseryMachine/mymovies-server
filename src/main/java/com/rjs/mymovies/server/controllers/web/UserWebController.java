@@ -27,15 +27,16 @@ public class UserWebController extends UserController {
         super(userService);
     }
 
-    @GetMapping("/login-signup")
+    @GetMapping("/signup")
     public String getLoginSignUp(Model model) {
         model.addAttribute("newUser", new UserDto());
+        model.addAttribute("userCreated", false);
         model.addAttribute("newUserMessage", "");
 
-        return "user/login-signup";
+        return "/user/signup";
     }
 
-    @PostMapping(value = "/login-signup", params = "action=signup")
+    @PostMapping(value = "/signup")
     public ModelAndView registerUser(@ModelAttribute("newUser") @Valid UserDto userDto, BindingResult bindingResult, WebRequest webRequest, Errors errors) {
         boolean hasErrors = bindingResult.hasErrors();
 
@@ -57,24 +58,18 @@ public class UserWebController extends UserController {
 
         if (!hasErrors) {
             User user = userService.createUser(userDto);
+            model.put("userCreated", true);
             model.put("newUserMessage", "User " + user.getUsername() + " created.");
             model.put("newUser", new UserDto());
         }
         else {
             userDto.setPassword("");
             userDto.setConfirmPassword("");
+            model.put("userCreated", false);
             model.put("newUser", userDto);
         }
 
-        return new ModelAndView("user/login-signup", model);
-    }
-
-    @GetMapping("/registration")
-    public String showUserRegistration(Model model) {
-        model.addAttribute("appRoles", Role.getRoleText());
-        model.addAttribute("newUser", new UserDto());
-
-        return "user-info-form";
+        return new ModelAndView("user/signup", model);
     }
 
     @GetMapping("/update/{userId}")

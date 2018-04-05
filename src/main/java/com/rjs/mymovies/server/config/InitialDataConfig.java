@@ -2,13 +2,11 @@ package com.rjs.mymovies.server.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rjs.mymovies.server.model.DataConstants;
-import com.rjs.mymovies.server.model.Show;
-import com.rjs.mymovies.server.model.ShowType;
-import com.rjs.mymovies.server.model.User;
+import com.rjs.mymovies.server.model.*;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
 import com.rjs.mymovies.server.service.UserService;
+import com.rjs.mymovies.server.service.UserShowFilterService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +15,7 @@ import org.springframework.core.io.FileSystemResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,6 +31,8 @@ public class InitialDataConfig {
     private ShowService showService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserShowFilterService userShowFilterService;
 
     public InitialDataConfig() {
     }
@@ -43,11 +44,18 @@ public class InitialDataConfig {
 
         try {
             JsonNode jsonNode = jsonObjectMapper.readTree(dataResource.getInputStream());
-
             if (jsonNode.has("users")) {
                 String jsonString = jsonNode.get("users").toString();
                 User[] users = jsonObjectMapper.readValue(jsonString, User[].class);
-                initUsers(users);
+                final User aUser = initUsers(users);
+
+                if (jsonNode.has("userFilters")) {
+                    jsonString = jsonNode.get("userFilters").toString();
+                    UserShowFilter[] filters = jsonObjectMapper.readValue(jsonString, UserShowFilter[].class);
+                    Arrays.stream(filters).forEach(f -> f.setUser(aUser));
+
+                    userShowFilterService.save(Arrays.asList(filters));
+                }
             }
 
             if (jsonNode.has("showTypes")) {
@@ -69,7 +77,7 @@ public class InitialDataConfig {
         return "data initialized";
     }
 
-    private void initUsers(User[] users) {
+    private User initUsers(User[] users) {
         for (User user : users) {
             User curUser = userService.getUser(user.getUsername());
 
@@ -87,6 +95,8 @@ public class InitialDataConfig {
                 LOGGER.info("User created [" + user.getUsername() + "].");
             }
         }
+
+        return userService.get(1L);
     }
 
     private void initShowTypes(ShowType[] showTypes) {

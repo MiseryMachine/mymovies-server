@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="/layouts/default"
+>
+<head>
+    <meta charset="UTF-8"/>
+    <title>My Movies - Login</title>
+</head>
+<body>
+<div id="homePage" layout:fragment="content">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Log In</h4>
+                    <div class="card-text">
+                        <div th:if="${param.error}">
+                            Invalid username or password.
+                        </div>
+                        <div th:if="${param.logout}">
+                            You have been logged out.
+                        </div>
+                        <form th:action="@{/user/login}" method="post" th:object="${loginUser}">
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="usernameField">User Name:</label>
+                                    <input id="usernameField" type="text" name="username" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-12">
+                                    <label for="passwordField">Password:</label>
+                                    <input id="passwordField" type="password" name="password" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button id="login-button" type="submit" class="btn btn-primary"><i class="fa fa-sign-in" aria-hidden="true"></i> Log In</button>
+                                <!--<a id="sign-up-button" th:href="@{/user/signup}" class="btn btn-success"><i class="fa fa-user-o" aria-hidden="true"></i> Sign Up</a>-->
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

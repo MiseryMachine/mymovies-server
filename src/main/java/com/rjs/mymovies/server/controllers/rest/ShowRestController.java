@@ -3,7 +3,7 @@ package com.rjs.mymovies.server.controllers.rest;
 import com.rjs.mymovies.server.controllers.ShowController;
 import com.rjs.mymovies.server.model.Show;
 import com.rjs.mymovies.server.model.dto.ShowDto;
-import com.rjs.mymovies.server.model.form.show.ShowSearch;
+import com.rjs.mymovies.server.model.dto.ShowFilterDto;
 import com.rjs.mymovies.server.service.ShowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,12 +24,12 @@ public class ShowRestController extends ShowController {
 
     @GetMapping("/search")
     public Map<String, Object> getShowSearchForm() {
-        return buildInitialModel();
+        return buildSearchModel(initializeShowFilter(), null);
     }
 
     @PostMapping("/search")
-    public List<ShowDto> searchShows(@RequestBody ShowSearch showSearch) {
-        List<Show> shows = getShowData(showSearch);
+    public List<ShowDto> searchShows(@RequestBody ShowFilterDto showFilterDto) {
+        List<Show> shows = getShowData(showFilterDto);
 
         if (shows != null && !shows.isEmpty()) {
             return shows.stream().map(this::convertToShowDto).collect(Collectors.toList());

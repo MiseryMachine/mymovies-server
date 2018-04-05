@@ -27,6 +27,27 @@
       "roles": ["ROLE_USER"]
     }
   ],
+  "userFilters": [
+    {
+      "name": "Action movies",
+      "showTypeName": "Movie",
+      "starRating": 2,
+      "genres": ["Action"]
+    },
+    {
+      "name": "Fun movies in HD",
+      "showTypeName": "Movie",
+      "starRating": 2,
+      "format": "BLU-RAY",
+      "genres": ["Action", "Adventure", "Comedy", "Sci-Fi"]
+    },
+    {
+      "name": "Good anime",
+      "showTypeName": "TV",
+      "starRating": 4,
+      "genres": ["Anime"]
+    }
+  ],
   "showTypes": [
     {
       "name": "Movie",

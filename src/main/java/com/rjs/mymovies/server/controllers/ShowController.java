@@ -2,9 +2,8 @@ package com.rjs.mymovies.server.controllers;
 
 import com.rjs.mymovies.server.model.DataConstants;
 import com.rjs.mymovies.server.model.Show;
-import com.rjs.mymovies.server.model.ShowType;
 import com.rjs.mymovies.server.model.dto.ShowDto;
-import com.rjs.mymovies.server.model.form.show.ShowSearch;
+import com.rjs.mymovies.server.model.dto.ShowFilterDto;
 import com.rjs.mymovies.server.service.ShowService;
 import com.rjs.mymovies.server.service.ShowTypeService;
 import org.modelmapper.ModelMapper;
@@ -43,39 +42,52 @@ public abstract class ShowController {
 		this.showService = showService;
 	}
 
+/*
 	protected Map<String, Object> buildInitialModel() {
-		ShowSearch showSearch = new ShowSearch();
+		ShowFilterDto showFilterDto = new ShowFilterDto();
 
-		showSearch.setShowType(showTypeService.get("Movie"));
-		showSearch.setFormat(DataConstants.MEDIA_FORMATS[0]);
-		showSearch.setStarRating(DataConstants.STAR_RATINGS[DataConstants.STAR_RATINGS.length - 1]);
-		showSearch.setTitle("");
+		showFilterDto.setShowTypeName("Movie");
+		showFilterDto.setFormat(DataConstants.MEDIA_FORMATS[0]);
+		showFilterDto.setStarRating(DataConstants.STAR_RATINGS[DataConstants.STAR_RATINGS.length - 1]);
+		showFilterDto.setTitle("");
 
 		Map<String, Object> model = new HashMap<>();
 
 		model.put("showTypes", showTypeService.getAll());
+//		model.put("showTypes", showTypeService.getAllAsMap());
 		model.put("starRatings", DataConstants.STAR_RATINGS);
 		model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
-		model.put("showSearchFilter", showSearch);
+		model.put("showSearchFilter", showFilterDto);
 		model.put("numResults", 0);
 		model.put("shows", new ArrayList<>());
 
 		return model;
 	}
+*/
 
-	protected List<Show> getShowData(ShowSearch showSearch) {
-		ShowType showType = showSearch.getShowType();
+	protected ShowFilterDto initializeShowFilter() {
+		ShowFilterDto showFilterDto = new ShowFilterDto();
 
-		Map<String, Object> paramMap = new HashMap<>();
-		paramMap.put("title", showSearch.getTitle());
-		paramMap.put("starRating", showSearch.getStarRating());
-		paramMap.put("mediaFormat", showSearch.getFormat());
-		paramMap.put("genres", showSearch.getGenres());
+		showFilterDto.setShowTypeName("Movie");
+		showFilterDto.setFormat(DataConstants.MEDIA_FORMATS[0]);
+		showFilterDto.setStarRating(DataConstants.STAR_RATINGS[DataConstants.STAR_RATINGS.length - 1]);
+		showFilterDto.setTitle("");
 
-		return showService.searchShows(showType.getName(), paramMap, DEFAULT_SORT);
+		return showFilterDto;
 	}
 
-	protected Map<String, Object> buildSearchModel(ShowSearch showSearch, List<Show> searchResults) {
+	protected List<Show> getShowData(ShowFilterDto showFilterDto) {
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("title", showFilterDto.getTitle());
+		paramMap.put("starRating", showFilterDto.getStarRating());
+		paramMap.put("mediaFormat", showFilterDto.getFormat());
+		paramMap.put("genres", showFilterDto.getGenres());
+
+//		return showService.searchShows(showFilterDto.getShowTypeName(), paramMap, DEFAULT_SORT);
+		return showService.searchShows(showFilterDto.getShowTypeName(), paramMap, DEFAULT_SORT);
+	}
+
+	protected Map<String, Object> buildSearchModel(ShowFilterDto showFilterDto, List<Show> searchResults) {
 		Map<String, Object> model = new HashMap<>();
 		List<ShowDto> showDtos;
 
@@ -87,9 +99,10 @@ public abstract class ShowController {
 		}
 
 		model.put("showTypes", showTypeService.getAll());
+//		model.put("showTypes", showTypeService.getAllAsMap());
 		model.put("starRatings", DataConstants.STAR_RATINGS);
 		model.put("mediaFormats", DataConstants.MEDIA_FORMATS);
-		model.put("showSearchFilter", showSearch);
+		model.put("showSearchFilter", showFilterDto);
 		model.put("numResults", showDtos.size());
 		model.put("shows", showDtos);
 

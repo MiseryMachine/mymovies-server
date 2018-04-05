@@ -3,7 +3,9 @@ package com.rjs.mymovies.server.model;
 import com.rjs.mymovies.server.model.security.Role;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,6 +24,8 @@ public class User extends AbstractElement {
 	private String password;
 	private boolean enabled = true;
 	private Set<Role> roles = new LinkedHashSet<>();
+//	private Set<UserShowFilter> userShowFilters = new HashSet<>();
+	private List<UserShowFilter> userShowFilters = new ArrayList<>();
 
 	public User() {
 	}
@@ -88,5 +92,25 @@ public class User extends AbstractElement {
 
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+/*
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true, fetch = FetchType.EAGER)
+	public Set<UserShowFilter> getUserShowFilters() {
+		return userShowFilters;
+	}
+
+	public void setUserShowFilters(Set<UserShowFilter> userShowFilters) {
+		this.userShowFilters = userShowFilters;
+	}
+*/
+
+	@Transient
+	public List<UserShowFilter> getUserShowFilters() {
+		return userShowFilters;
+	}
+
+	public void setUserShowFilters(List<UserShowFilter> userShowFilters) {
+		this.userShowFilters = userShowFilters;
 	}
 }

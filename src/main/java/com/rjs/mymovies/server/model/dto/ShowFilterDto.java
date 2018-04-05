@@ -1,28 +1,24 @@
-package com.rjs.mymovies.server.model.form.show;
-
-import com.rjs.mymovies.server.model.ShowType;
+package com.rjs.mymovies.server.model.dto;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class ShowSearch {
-    private ShowType showType = null;
+public class ShowFilterDto {
+    private String showTypeName = "";
     private String title = "";
     private int starRating = 0;
     private String format = "";
-//    private List<String> genres = new ArrayList<>();
     private Set<String> genres = new LinkedHashSet<>();
-//    private String[] genres = new String[0];
 
-    public ShowSearch() {
+    public ShowFilterDto() {
     }
 
-    public ShowType getShowType() {
-        return showType;
+    public String getShowTypeName() {
+        return showTypeName;
     }
 
-    public void setShowType(ShowType showType) {
-        this.showType = showType;
+    public void setShowTypeName(String showTypeName) {
+        this.showTypeName = showTypeName;
     }
 
     public String getTitle() {
@@ -49,16 +45,6 @@ public class ShowSearch {
         this.format = format;
     }
 
-/*
-    public List<String> getGenres() {
-        return genres;
-    }
-
-    public void setGenres(List<String> genres) {
-        this.genres = genres;
-    }
-*/
-
     public Set<String> getGenres() {
         return genres;
     }
@@ -66,13 +52,4 @@ public class ShowSearch {
     public void setGenres(Set<String> genres) {
         this.genres = genres;
     }
-/*
-    public String[] getGenres() {
-        return genres;
-    }
-
-    public void setGenres(String[] genres) {
-        this.genres = genres;
-    }
-*/
 }

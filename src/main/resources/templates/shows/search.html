@@ -11,6 +11,100 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/rating.css}"/>
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
+        function updateGenres() {
+            var showTypes = /*[[${showTypes}]]*/ null;
+            var filterShowType = /*[[${showSearchFilter.showTypeName}]]*/ null;
+            var filterGenres = /*[[${showSearchFilter.genres}]]*/ [];
+            var showTypeIdx = $("#show-type-select").prop('selectedIndex');
+
+            if (showTypeIdx === null || showTypeIdx === undefined) {
+                showTypeIdx = 0;
+            }
+
+            var showType = showTypes[showTypeIdx];
+            var genreSelect = $("#genre-select");
+            var options = [];
+
+            if (genreSelect.prop) {
+                options = genreSelect.prop("options");
+            }
+            else {
+                options = genreSelect.attr("options");
+            }
+
+            $("option", genreSelect).remove();
+
+            if (showType !== null && showType !== undefined) {
+                var genres = showType.genres;
+                // var genres = showType.genresOrdered;
+
+                $.each(genres, function (genreIdx, genreVal) {
+                    var selected = showType.name === filterShowType && filterGenres.indexOf(genreVal) >= 0;
+                    options[options.length] = new Option(genreVal, genreVal, false, selected);
+                });
+            }
+        }
+
+        function filterSelected() {
+            var userFilters = /*[[${userFilters}]]*/ null;
+            console.log("userFilters = " + userFilters);
+
+            if (userFilters !== null) {
+                var filterIdx = $("#filter-select").prop("selectedIndex");
+                console.log("filterIdx = " + filterIdx);
+
+                if (filterIdx === null || filterIdx === undefined || filterIdx < 0) {
+                    return;
+                }
+
+                var showTypeSelect = $("#show-type-select");
+                var formatSelect = $("#format-select");
+                var ratingSelect = $("#rating-select");
+                var titleText = $("#title-text");
+                var genreSelect = $("#genre-select");
+
+                showTypeSelect.prop("selectedIndex", 0);
+                formatSelect.prop("selectedIndex", 0);
+                ratingSelect.prop("selectedIndex", ratingSelect.length - 1);
+                titleText.val("");
+
+                if (filterIdx > 0 && filterIdx <= userFilters.length) {
+                    var userFilter = userFilters[--filterIdx];
+
+                    if (userFilter.showTypeName !== null && userFilter.showTypeName !== "") {
+                        console.log("userFilter.showTypeName = " + userFilter.showTypeName);
+                        showTypeSelect.val(userFilter.showTypeName);
+                        updateGenres();
+                        genreSelect.prop("selectedIndex", -1);
+                    }
+
+                    if (userFilter.format !== null && userFilter.format !== "") {
+                        console.log("userFilter.format = " + userFilter.format);
+                        formatSelect.val(userFilter.format);
+                    }
+
+                    if (userFilter.starRating !== null && userFilter.starRating !== "") {
+                        console.log("userFilter.starRating = " + userFilter.starRating);
+                        ratingSelect.val(userFilter.starRating);
+                    }
+
+                    if (userFilter.title !== null && userFilter.title !== "") {
+                        console.log("userFilter.title = " + userFilter.title);
+                        titleText.val(userFilter.title);
+                    }
+
+                    if (userFilter.genres !== null && userFilter.genres.length > 0) {
+                        console.log("userFilter.genres = " + userFilter.genres);
+                        genreSelect.val(userFilter.genres);
+                    }
+                }
+                else {
+                    updateGenres();
+                    genreSelect.prop("selectedIndex", -1);
+                }
+            }
+        }
+
         $(document).ready(function () {
             var isAdmin = /*[[${@adminService.hasRoles(#httpServletRequest, 'ROLE_ADMIN')}]]*/ false;
 
@@ -61,6 +155,8 @@
                 dom: "<'row'<'col-sm-3'f><'col-sm-9'p>><'row'<'col-sm-12'tr>><'row'<'col-sm-3'l><'col-sm-9'p>>",
                 columnDefs: colDefs
             });
+
+            updateGenres();
         });
 
         var showDetailsUrl = /*[[@{/shows/details}]]*/ "/shows/blah/details";
@@ -81,7 +177,18 @@
 </head>
 <body>
 <div id="showsPage" layout:fragment="content">
-    <h1 class="row">Search Shows</h1>
+    <div class="row">
+        <h1 class="col-sm-6">Search Shows</h1>
+        <div class="col-sm-6">
+            <select id="filter-select" class="form-control" onchange="filterSelected();">
+            <!--<select id="filter-select" class="form-control">-->
+                <option value="-1">None</option>
+                <option th:each="uf : ${userFilters}"
+                        th:value="${uf.name}"
+                        th:text="${uf.name}"></option>
+            </select>
+        </div>
+    </div>
 
     <form action="#" th:action="@{/shows/search}" th:object="${showSearchFilter}" method="post">
         <div class="form-row">
@@ -89,9 +196,9 @@
                 <div class="form-row">
                     <div class="form-group col-sm-4">
                         <label for="show-type-select">Type:</label>
-                        <select id="show-type-select" class="form-control" th:field="*{showType}">
+                        <select id="show-type-select" class="form-control" th:field="*{showTypeName}" onchange="updateGenres();">
                             <option th:each="st : ${showTypes}"
-                                    th:value="${st.id}"
+                                    th:value="${st.name}"
                                     th:text="${st.name}"></option>
                         </select>
                     </div>
@@ -123,9 +230,11 @@
                 <div class="form-group">
                     <label for="title-text">Genres:</label>
                     <select id="genre-select" class="form-control" multiple="multiple" size="5" th:field="*{genres}">
+<!--
                         <option th:each="g : *{showType.genres}"
                                 th:value="${g}"
                                 th:text="${g}"></option>
+-->
                     </select>
                 </div>
             </div>

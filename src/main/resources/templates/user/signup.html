@@ -15,42 +15,11 @@
         <div class="col-sm-6">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title">Log In</h4>
-                    <div class="card-text">
-                        <div th:if="${param.error}">
-                            Invalid username or password.
-                        </div>
-                        <div th:if="${param.logout}">
-                            You have been logged out.
-                        </div>
-                        <form th:action="@{/login}" method="post" th:object="${loginUser}">
-                            <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="usernameField">User Name:</label>
-                                    <input id="usernameField" type="text" name="username" class="form-control"/>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group col-sm-12">
-                                    <label for="passwordField">Password:</label>
-                                    <input id="passwordField" type="password" name="password" class="form-control"/>
-                                </div>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in" aria-hidden="true" name="action" value="login"></i> Log In</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card">
-                <div class="card-body">
-                    <h4 th:if="${newUserMessage != null AND !newUserMessage.equals('')}" class="text-success" th:text="${newUserMessage}"></h4>
+                    <!--<h4 th:if="${newUserMessage != null AND !newUserMessage.equals('')}" class="text-success" th:text="${newUserMessage}"></h4>-->
+                    <h4 th:if="${userCreated}" class="text-success">User Created <a id="login-button" th:href="@{/user/login}" class="btn btn-primary"><i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a></h4>
                     <h4 class="card-title">Sign Up</h4>
                     <div class="card-text">
-                        <form action="#" th:action="@{/user/login-signup}" method="post" th:object="${newUser}">
+                        <form action="#" th:action="@{/user/signup}" method="post" th:object="${newUser}">
                             <div class="form-row">
                                 <div class="form-group col-sm-12">
                                     <label for="first-name-field">First Name:</label>
@@ -100,7 +69,8 @@
                                 </div>
                             </div>
                             <div class="text-center">
-                                <button id="sign-up-button" type="submit" class="btn btn-success" name="action" value="signup"><i class="fa fa-user-o" aria-hidden="true"></i> Sign Up</button>
+                                <button id="sign-up-button" type="submit" class="btn btn-success"><i class="fa fa-user-o" aria-hidden="true"></i> Sign Up</button>
+                                <!--<a id="login-button" th:href="@{/user/login}" class="btn btn-primary"><i class="fa fa-sign-in" aria-hidden="true"></i> Log In</a>-->
                             </div>
                         </form>
                     </div>

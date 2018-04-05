@@ -2,7 +2,9 @@ package com.rjs.mymovies.server.service;
 
 import com.rjs.mymovies.server.config.AppConfig;
 import com.rjs.mymovies.server.model.Show;
+import com.rjs.mymovies.server.model.UserShowFilter;
 import com.rjs.mymovies.server.repos.ShowRepository;
+import com.rjs.mymovies.server.repos.UserShowFilterRepository;
 import com.rjs.mymovies.server.repos.filter.AtomicDataFilter;
 import com.rjs.mymovies.server.repos.filter.CollectionDataFilter;
 import com.rjs.mymovies.server.repos.filter.NumericDateDataFilter;
@@ -40,6 +42,8 @@ public class ShowService extends BaseService<Show, ShowRepository> {
     private File defaultBoxArt;
     @Autowired
     private File defaultBoxArtThumb;
+    @Autowired
+    private UserShowFilterRepository userShowFilterRepository;
 
     @Autowired
     public ShowService(ShowRepository showRepository) {
@@ -143,6 +147,10 @@ public class ShowService extends BaseService<Show, ShowRepository> {
         }
 
         return imgData;
+    }
+
+    public UserShowFilter getUserShowFilter(Long userFilterId) {
+        return userShowFilterRepository.findOne(userFilterId);
     }
 
     private Specification<Show> buildShowSpecification(String showTypeName, Map<String, Object> params) {

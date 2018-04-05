@@ -1,11 +1,14 @@
 package com.rjs.mymovies.server.controllers.web;
 
+import com.rjs.mymovies.server.config.security.UserPrincipal;
 import com.rjs.mymovies.server.controllers.ShowController;
 import com.rjs.mymovies.server.model.Show;
-import com.rjs.mymovies.server.model.form.show.ShowSearch;
+import com.rjs.mymovies.server.model.dto.ShowFilterDto;
 import com.rjs.mymovies.server.service.ShowService;
+import com.rjs.mymovies.server.service.UserShowFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -18,31 +21,39 @@ import java.util.List;
 @RequestMapping("/shows")
 public class ShowWebController extends ShowController {
     @Autowired
+    private UserShowFilterService userShowFilterService;
+
+    @Autowired
     public ShowWebController(ShowService showService) {
         super(showService);
     }
 
-    @GetMapping("/search")
-    public ModelAndView searchShowForm(@ModelAttribute("showSearchFilter") ShowSearch showSearch) {
-        ModelAndView mav = new ModelAndView("/shows/search");
 
-        if (showSearch.getShowType() == null) {
-            mav.getModel().putAll(buildInitialModel());
+    @GetMapping("/search")
+    public ModelAndView searchShowForm(@ModelAttribute("showSearchFilter")ShowFilterDto showFilterDto, Authentication authentication) {
+        ModelAndView mav = new ModelAndView("/shows/search");
+        List<Show> results = null;
+
+/*
+        if (!StringUtils.isEmpty(showFilterDto.getShowTypeName())) {
+            results = getShowData(showFilterDto);
         }
-        else {
-            List<Show> results = getShowData(showSearch);
-            mav.getModel().putAll(buildSearchModel(showSearch, results));
-        }
+*/
+
+        mav.getModel().putAll(buildSearchModel(showFilterDto, results));
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+        mav.getModel().put("userFilters", principal.getUser().getUserShowFilters());
 
         return mav;
     }
 
     @PostMapping("/search")
-    public ModelAndView searchShows(@ModelAttribute("showSearchFilter") ShowSearch showSearch) {
-        List<Show> results = getShowData(showSearch);
+    public ModelAndView searchShows(@ModelAttribute("showSearchFilter") ShowFilterDto showFilterDto) {
+        List<Show> results = getShowData(showFilterDto);
         ModelAndView mav = new ModelAndView("/shows/search");
 
-        mav.getModel().putAll(buildSearchModel(showSearch, results));
+        mav.getModel().putAll(buildSearchModel(showFilterDto, results));
 
         return mav;
     }
@@ -71,7 +82,7 @@ public class ShowWebController extends ShowController {
     }
 
     @ModelAttribute("showSearchFilter")
-    public ShowSearch setupShowSearchFilter() {
-        return new ShowSearch();
+    public ShowFilterDto setupShowSearchFilter() {
+        return initializeShowFilter();
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ShowTypeService extends BaseService<ShowType, ShowTypeRepository> {
@@ -16,6 +18,10 @@ public class ShowTypeService extends BaseService<ShowType, ShowTypeRepository> {
 
     public List<ShowType> getAll() {
         return ((ShowTypeRepository) repository).findAllByOrderByName();
+    }
+
+    public Map<String, ShowType> getAllAsMap() {
+        return getAll().stream().collect(Collectors.toMap(ShowType::getName, st -> st));
     }
 
     public ShowType get(String showTypeName) {
